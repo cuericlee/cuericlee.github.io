@@ -1,0 +1,618 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next " lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="//main.css?v=" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="spark,machine learning,tuning,performance," />
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="AbstractSpark Advanced Tuning course is designed for attendees of online course of Big Data University. This article discuss some common way to tuning an job of spark ML.
+SetupClone spark-ml-pipeline">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Performance Tuning of Spark ML Job">
+<meta property="og:url" content="http://ericculee.github.io/2016/08/25/Performance-Tuning-of-Spark-ML-Job/index.html">
+<meta property="og:site_name" content="Eric Li's Blog">
+<meta property="og:description" content="AbstractSpark Advanced Tuning course is designed for attendees of online course of Big Data University. This article discuss some common way to tuning an job of spark ML.
+SetupClone spark-ml-pipeline">
+<meta property="og:updated_time" content="2017-03-17T08:45:07.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Performance Tuning of Spark ML Job">
+<meta name="twitter:description" content="AbstractSpark Advanced Tuning course is designed for attendees of online course of Big Data University. This article discuss some common way to tuning an job of spark ML.
+SetupClone spark-ml-pipeline">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: '',
+    sidebar: "",
+    fancybox: ,
+    motion: ,
+    duoshuo: {
+      userId: 'undefined',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    }
+  };
+</script>
+
+
+
+
+
+
+
+  <title> Performance Tuning of Spark ML Job | Eric Li's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81414009-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+  
+  
+
+  <div class="container one-collumn  page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Eric Li's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://ericculee.github.io/2016/08/25/Performance-Tuning-of-Spark-ML-Job/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Eric Li">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Eric Li's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Eric Li's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Performance Tuning of Spark ML Job
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <a href="/2016/08/25/Performance-Tuning-of-Spark-ML-Job/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/08/25/Performance-Tuning-of-Spark-ML-Job/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h3><p>Spark Advanced Tuning course is designed for attendees of online course of Big Data University. This article discuss some common way to tuning an job of spark ML.</p>
+<h3 id="Setup"><a href="#Setup" class="headerlink" title="Setup"></a>Setup</h3><p>Clone spark-ml-pipeline project</p>
+<pre><code>clone git@github.com:big-data-university/spark-ml-pipeline.git
+git checkout -b advanced
+</code></pre><h3 id="Tuning"><a href="#Tuning" class="headerlink" title="Tuning"></a>Tuning</h3><h4 id="1-Change-parallelism-default-partition-number-of-RDD"><a href="#1-Change-parallelism-default-partition-number-of-RDD" class="headerlink" title="1. Change parallelism (default partition number of RDD)"></a>1. <strong>Change parallelism (default partition number of RDD)</strong></h4><h5 id="1-1-Default-core-number"><a href="#1-1-Default-core-number" class="headerlink" title="1.1 Default core number"></a>1.1 Default core number</h5><p><code>val conf = new SparkConf().setAppName(&quot;CrossValidation Pipeline&quot;).setMaster(&quot;local[4]&quot;) //Using 2 core running on local</code></p>
+<p><a href="https://gist.github.com/cuericlee/3cdc51489c01e1add766f199ef260a34#file-pipline-scala-L51" target="_blank" rel="external">core number</a></p>
+<h5 id="1-2-Default-parallelism"><a href="#1-2-Default-parallelism" class="headerlink" title="1.2 Default parallelism"></a>1.2 Default parallelism</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">/*</div><div class="line">*Increase parallelism, local default = number of core. e.g. 8 on mac</div><div class="line">*/</div><div class="line"></div><div class="line">conf.set(&quot;spark.default.parallelism&quot;, &quot;4&quot;)</div></pre></td></tr></table></figure>
+<h5 id="1-3-Repartition-RDD-to-change-parallelism-on-the-fly"><a href="#1-3-Repartition-RDD-to-change-parallelism-on-the-fly" class="headerlink" title="1.3 Repartition RDD to change parallelism on the fly"></a>1.3 Repartition RDD to change parallelism on the fly</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">train.repartition(1)</div><div class="line">    </div><div class="line">train.repartition(10)</div></pre></td></tr></table></figure>
+<h4 id="2-Efficient-Serialize"><a href="#2-Efficient-Serialize" class="headerlink" title="2. Efficient Serialize"></a>2. <strong>Efficient Serialize</strong></h4><ul>
+<li>Enable Kryoserilizer for efficient persistent/cache and memory usage</li>
+</ul>
+<p><code>conf.set(&quot;spark.serializer&quot;, &quot;org.apache.spark.serializer.KryoSerializer&quot;)</code></p>
+<ul>
+<li>Enable library of kryo in build.sbt</li>
+</ul>
+<p><code>libraryDependencies += &quot;com.esotericsoftware&quot; %% &quot;kryo&quot; % &quot;4.0.0&quot;</code></p>
+<ul>
+<li>RDD persistent/cache</li>
+</ul>
+<p><code>RDD.persist(StorageLevel.MEMORY_ONLY_SER)</code></p>
+<h4 id="3-Reduce-times-of-full-GC"><a href="#3-Reduce-times-of-full-GC" class="headerlink" title="3. Reduce times of full GC"></a><strong>3. Reduce times of full GC</strong></h4><h5 id="3-1-Enable-GC-verbose-output-for-analysis"><a href="#3-1-Enable-GC-verbose-output-for-analysis" class="headerlink" title="3.1 Enable GC verbose output for analysis"></a>3.1 Enable GC verbose output for analysis</h5><p>Add JVM parameters to enable verbose and GC detail <code>-verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+UseCompressedOops</code></p>
+<pre><code>/**
+ * Enable GC trace for executor
+ */
+conf.set(&quot;spark.executor.extraJavaOptions&quot;, &quot;-verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+UseCompressedOops&quot;)
+</code></pre><h5 id="3-2-Determine-number-of-full-GC-during-whole-execution-using-standard-output"><a href="#3-2-Determine-number-of-full-GC-during-whole-execution-using-standard-output" class="headerlink" title="3.2 Determine number of full GC during whole execution using standard output."></a>3.2 Determine number of full GC during whole execution using standard output.</h5><pre><code>cat &lt;your_log_file&gt;|grep &quot;Full GC&quot;|wc -l
+</code></pre><h5 id="3-3-Evaluate-size-of-RDD-partition"><a href="#3-3-Evaluate-size-of-RDD-partition" class="headerlink" title="3.3 Evaluate size of RDD partition"></a>3.3 Evaluate size of RDD partition</h5><ol>
+<li>dfs.block.size - The default value in Hadoop 2.0 is 128MB. In the local mode the corresponding parameter is fs.local.block.size (Default value 32MB). It defines the default partition size.</li>
+</ol>
+<ol>
+<li><p>numPartitions - The default value is 0 which effectively defaults to 1. This is a parameter you pass to the sc.textFile(inputPath,numPartitions) method. It is used to decrease the partition size (increase the number of partitions) from the default value defined by dfs.block.size</p>
+</li>
+<li><p>mapreduce.input.fileinputformat.split.minsize - The default value is 1 byte. It is used to increase the partition size (decrease the number of partitions) from the default value defined by dfs.block.size</p>
+</li>
+</ol>
+<pre><code>println(&quot;fs.local.block.size: &quot; + sc.getConf.get(&quot;fs.local.block.size&quot;))
+println(&quot;mapreduce.input.fileinputformat.split.minsize: &quot; + sc.getConf.get(&quot;mapreduce.input.fileinputformat.split.minsize&quot;))
+println(&quot;size of trainRDD: &quot; + SizeEstimator.estimate(train) + &quot; Byte&quot;)
+println(&quot;size of testRDD: &quot; + SizeEstimator.estimate(test) + &quot; Byte&quot;)
+</code></pre><h5 id="3-4-Adjust-parallelism-to-reduce-number-of-full-GC"><a href="#3-4-Adjust-parallelism-to-reduce-number-of-full-GC" class="headerlink" title="3.4 Adjust parallelism to reduce number of full GC"></a>3.4 Adjust parallelism to reduce number of full GC</h5><ol>
+<li>Reduce parallelism when size of RDD &lt; block size</li>
+<li>Increase parallelism when of RDD &gt; block size</li>
+</ol>
+<h5 id="3-5-Increase-java-heap-for-both-driver-JVM-and-executor-to-reduce-GC"><a href="#3-5-Increase-java-heap-for-both-driver-JVM-and-executor-to-reduce-GC" class="headerlink" title="3.5 Increase java heap for both driver JVM and executor to reduce GC"></a>3.5 Increase java heap for both driver JVM and executor to reduce GC</h5><pre><code>conf.set(&quot;spark.driver.memory&quot;, &quot;2G&quot;) // Increase java heap for driver, -Xmx is illegal setting
+
+conf.set(&quot;spark.executor.memory&quot;, &quot;1G&quot;) //Increase to 2G per executor from default value 1G. -Xmx1G is illegal setting for spark executor.
+</code></pre><h5 id="3-6-validate-number-of-full-GC-and-conclusion"><a href="#3-6-validate-number-of-full-GC-and-conclusion" class="headerlink" title="3.6 validate number of full GC and conclusion"></a>3.6 validate number of full GC and conclusion</h5><p>Conclusion: It is significantly to reduce the execution time after reducing number of full GC.</p>
+<h4 id="4-Increase-instance-number-of-executor-in-the-cluster-env"><a href="#4-Increase-instance-number-of-executor-in-the-cluster-env" class="headerlink" title="4. Increase instance number of executor in the cluster env"></a><strong>4. Increase instance number of executor in the cluster env</strong></h4><p>Check the size and partition of RDD</p>
+<p>When size of RDD &gt;&gt; block size and number partition &gt;&gt; executor * core, it is significant improve performance to increase instance number of executor allowed in the cluster.</p>
+<pre><code>/**
+ * Increase executor numbers to increase parallelism, only works for cluster env. standalone, yarn, mesos
+ */
+conf.set(&quot;spark.executor.instances&quot;, &quot;4&quot;)
+</code></pre><h4 id="5-Reserve-as-much-as-possible-memory-for-executor-but-does-make-executor-overload"><a href="#5-Reserve-as-much-as-possible-memory-for-executor-but-does-make-executor-overload" class="headerlink" title="5. Reserve as much as possible memory for executor, but does make executor overload "></a><strong>5. Reserve as much as possible memory for executor, but does make executor overload </strong></h4><pre><code>conf.set(&quot;spark.executor.memory&quot;, &quot;1G&quot;) 
+</code></pre><h3 id="All-in-one"><a href="#All-in-one" class="headerlink" title="All in one"></a>All in one</h3><script src="https://gist.github.com/cuericlee/3cdc51489c01e1add766f199ef260a34.js"></script>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/spark/" rel="tag"># spark</a>
+          
+            <a href="/tags/machine-learning/" rel="tag"># machine learning</a>
+          
+            <a href="/tags/tuning/" rel="tag"># tuning</a>
+          
+            <a href="/tags/performance/" rel="tag"># performance</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/05/Research-on-High-availability-zone-and-federation-clusters-for-Kubernetes/" rel="next" title="Research on Ubernetes (High availability zone) and federation clusters for Kubernetes">
+                <i class="fa fa-chevron-left"></i> Research on Ubernetes (High availability zone) and federation clusters for Kubernetes
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/14/research-on-container-network/" rel="prev" title="Research on container network of Kubernetes">
+                Research on container network of Kubernetes <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.gif"
+               alt="Eric Li" />
+          <p class="site-author-name" itemprop="name">Eric Li</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">categories</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-name">tags</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eric Li</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="//jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="//fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="//jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="//velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="//velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="//src/utils.js?v="></script>
+
+  <script type="text/javascript" src="//src/motion.js?v="></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="//src/affix.js?v="></script>
+
+  <script type="text/javascript" src="//src/schemes/pisces.js?v="></script>
+
+
+
+  
+  <script type="text/javascript" src="//src/scrollspy.js?v="></script>
+<script type="text/javascript" src="//src/post-details.js?v="></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="//src/bootstrap.js?v="></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'cuericlee';
+      var disqus_identifier = '2016/08/25/Performance-Tuning-of-Spark-ML-Job/';
+
+      var disqus_title = "Performance Tuning of Spark ML Job";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

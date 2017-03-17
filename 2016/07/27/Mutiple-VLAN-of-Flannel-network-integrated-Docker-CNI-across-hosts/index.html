@@ -1,0 +1,655 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next " lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="//main.css?v=" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="kubernetes,vlan,flannel,docker,cni,etcd," />
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Update at 2016-08-05: add kubernets CNI + flannel integration to deploy rc using newly created vlan. add more trouble shooting for vlan ip managment.
+
+Multiple VLAN for Docker clusterAbstractflannel">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VLAN for Flannel network integrated Docker CNI and Kubernetes across multiple hosts">
+<meta property="og:url" content="http://ericculee.github.io/2016/07/27/Mutiple-VLAN-of-Flannel-network-integrated-Docker-CNI-across-hosts/index.html">
+<meta property="og:site_name" content="Eric Li's Blog">
+<meta property="og:description" content="Update at 2016-08-05: add kubernets CNI + flannel integration to deploy rc using newly created vlan. add more trouble shooting for vlan ip managment.
+
+Multiple VLAN for Docker clusterAbstractflannel">
+<meta property="og:image" content="http://ericculee.github.io/images/overlay_vlan.jpg">
+<meta property="og:updated_time" content="2017-03-17T08:42:13.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VLAN for Flannel network integrated Docker CNI and Kubernetes across multiple hosts">
+<meta name="twitter:description" content="Update at 2016-08-05: add kubernets CNI + flannel integration to deploy rc using newly created vlan. add more trouble shooting for vlan ip managment.
+
+Multiple VLAN for Docker clusterAbstractflannel">
+<meta name="twitter:image" content="http://ericculee.github.io/images/overlay_vlan.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: '',
+    sidebar: "",
+    fancybox: ,
+    motion: ,
+    duoshuo: {
+      userId: 'undefined',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    }
+  };
+</script>
+
+
+
+
+
+
+
+  <title> VLAN for Flannel network integrated Docker CNI and Kubernetes across multiple hosts | Eric Li's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81414009-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+  
+  
+
+  <div class="container one-collumn  page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Eric Li's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://ericculee.github.io/2016/07/27/Mutiple-VLAN-of-Flannel-network-integrated-Docker-CNI-across-hosts/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Eric Li">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Eric Li's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Eric Li's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                VLAN for Flannel network integrated Docker CNI and Kubernetes across multiple hosts
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <a href="/2016/07/27/Mutiple-VLAN-of-Flannel-network-integrated-Docker-CNI-across-hosts/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/07/27/Mutiple-VLAN-of-Flannel-network-integrated-Docker-CNI-across-hosts/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <ul>
+<li>Update at 2016-08-05: add kubernets CNI + flannel integration to deploy rc using newly created vlan. add more trouble shooting for vlan ip managment.</li>
+</ul>
+<h2 id="Multiple-VLAN-for-Docker-cluster"><a href="#Multiple-VLAN-for-Docker-cluster" class="headerlink" title="Multiple VLAN for Docker cluster"></a>Multiple VLAN for Docker cluster</h2><h3 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h3><p>flannel and cni is powerful to enable multiple VxLAN over multiple interface using the same bridge. It simplify complexity of VxLAN configuration of kubernetes cluster or any cluster of docker multiple hosts.</p>
+<p><img src="/images/overlay_vlan.jpg" alt=""></p>
+<h3 id="Setup-multiple-VLAN-of-flannel"><a href="#Setup-multiple-VLAN-of-flannel" class="headerlink" title="Setup multiple VLAN of flannel"></a>Setup multiple VLAN of flannel</h3><h4 id="1-Create-VLAN-setting-using-multiple-flannel-bridge"><a href="#1-Create-VLAN-setting-using-multiple-flannel-bridge" class="headerlink" title="1. Create VLAN setting using multiple flannel bridge"></a>1. Create VLAN setting using multiple flannel bridge</h4><pre><code>etcdctl set /coreos.com/network/vlan001/config  &apos;{ &quot;Network&quot;: &quot;10.1.0.0/16&quot;, &quot;Backend&quot;: { &quot;Type&quot;: &quot;vxlan&quot;, &quot;VNI&quot;: 1 } }&apos;
+etcdctl set /coreos.com/network/vlan002/config &apos;{ &quot;Network&quot;: &quot;10.2.0.0/16&quot;, &quot;Backend&quot;: { &quot;Type&quot;: &quot;vxlan&quot;, &quot;VNI&quot;: 2 } }&apos;
+etcdctl set /coreos.com/network/vlan003/config   &apos;{ &quot;Network&quot;: &quot;10.3.0.0/16&quot;, &quot;Backend&quot;: { &quot;Type&quot;: &quot;vxlan&quot;, &quot;VNI&quot;: 3 } }&apos;
+</code></pre><h4 id="2-Configure-master-node"><a href="#2-Configure-master-node" class="headerlink" title="2. Configure master node"></a>2. Configure master node</h4><p><code>/opt/bin/flanneld --etcd-endpoints=http://127.0.0.1:4001 --ip-masq --iface=10.160.61.145 --networks=vlan001,vlan002,vlan003</code></p>
+<h4 id="3-Configure-minion-node"><a href="#3-Configure-minion-node" class="headerlink" title="3. Configure minion node"></a>3. Configure minion node</h4><p><code>/opt/bin/flanneld --etcd-endpoints=http://10.160.61.145:4001 --ip-masq --iface=10.122.158.23 --networks=vlan001,vlan002,vlan003</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div></pre></td><td class="code"><pre><div class="line"># /opt/bin/flanneld --etcd-endpoints=http://10.160.61.145:4001 --ip-masq --iface=10.122.158.23 --networks=vlan001,vlan002,vlan003</div><div class="line">I0722 09:45:05.006103 07773 main.go:275] Installing signal handlers</div><div class="line">I0722 09:45:05.006800 07773 main.go:188] Using 10.122.158.23 as external interface</div><div class="line">I0722 09:45:05.006838 07773 main.go:189] Using 10.122.158.23 as external endpoint</div><div class="line">I0722 09:45:05.015478 07773 etcd.go:204] Picking subnet in range 10.3.1.0 ... 10.3.255.0</div><div class="line">I0722 09:45:05.016021 07773 etcd.go:204] Picking subnet in range 10.1.1.0 ... 10.1.255.0</div><div class="line">I0722 09:45:05.016704 07773 etcd.go:204] Picking subnet in range 10.2.1.0 ... 10.2.255.0</div><div class="line">I0722 09:45:05.017581 07773 etcd.go:84] Subnet lease acquired: 10.3.46.0/24</div><div class="line">I0722 09:45:05.019527 07773 etcd.go:84] Subnet lease acquired: 10.1.71.0/24</div><div class="line">I0722 09:45:05.021254 07773 etcd.go:84] Subnet lease acquired: 10.2.20.0/24</div><div class="line">I0722 09:45:05.027355 07773 ipmasq.go:50] Adding iptables rule: FLANNEL -d 10.3.0.0/16 -j ACCEPT</div><div class="line">I0722 09:45:05.035341 07773 ipmasq.go:50] Adding iptables rule: FLANNEL -d 10.2.0.0/16 -j ACCEPT</div><div class="line">I0722 09:45:05.037472 07773 ipmasq.go:50] Adding iptables rule: FLANNEL -d 10.1.0.0/16 -j ACCEPT</div><div class="line">I0722 09:45:05.046376 07773 ipmasq.go:50] Adding iptables rule: FLANNEL ! -d 224.0.0.0/4 -j MASQUERADE</div><div class="line">I0722 09:45:05.050128 07773 ipmasq.go:50] Adding iptables rule: FLANNEL ! -d 224.0.0.0/4 -j MASQUERADE</div><div class="line">I0722 09:45:05.053277 07773 ipmasq.go:50] Adding iptables rule: FLANNEL ! -d 224.0.0.0/4 -j MASQUERADE</div><div class="line">I0722 09:45:05.064919 07773 ipmasq.go:50] Adding iptables rule: POSTROUTING -s 10.3.0.0/16 -j FLANNEL</div><div class="line">I0722 09:45:05.066320 07773 ipmasq.go:50] Adding iptables rule: POSTROUTING -s 10.1.0.0/16 -j FLANNEL</div><div class="line">I0722 09:45:05.067803 07773 ipmasq.go:50] Adding iptables rule: POSTROUTING -s 10.2.0.0/16 -j FLANNEL</div><div class="line">I0722 09:45:05.079573 07773 ipmasq.go:50] Adding iptables rule: POSTROUTING ! -s 10.3.0.0/16 -d 10.3.0.0/16 -j MASQUERADE</div><div class="line">I0722 09:45:05.082317 07773 ipmasq.go:50] Adding iptables rule: POSTROUTING ! -s 10.1.0.0/16 -d 10.1.0.0/16 -j MASQUERADE</div><div class="line">I0722 09:45:05.086633 07773 ipmasq.go:50] Adding iptables rule: POSTROUTING ! -s 10.2.0.0/16 -d 10.2.0.0/16 -j MASQUERADE</div><div class="line">I0722 09:45:05.097434 07773 vxlan.go:153] Watching for L3 misses</div><div class="line">I0722 09:45:05.097514 07773 vxlan.go:159] Watching for new subnet leases</div><div class="line">I0722 09:45:05.099034 07773 vxlan.go:153] Watching for L3 misses</div><div class="line">I0722 09:45:05.099082 07773 vxlan.go:159] Watching for new subnet leases</div><div class="line">I0722 09:45:05.099479 07773 vxlan.go:153] Watching for L3 misses</div><div class="line">I0722 09:45:05.099515 07773 vxlan.go:159] Watching for new subnet leases</div><div class="line">I0722 09:45:05.100738 07773 vxlan.go:273] Handling initial subnet events</div><div class="line">I0722 09:45:05.100774 07773 device.go:159] calling GetL2List() dev.link.Index: 6</div><div class="line">I0722 09:45:05.100960 07773 device.go:164] calling NeighAdd: 10.160.61.145, 32:f7:77:37:0b:2c</div><div class="line">I0722 09:45:05.103145 07773 vxlan.go:273] Handling initial subnet events</div><div class="line">I0722 09:45:05.103174 07773 device.go:159] calling GetL2List() dev.link.Index: 5</div><div class="line">I0722 09:45:05.103408 07773 vxlan.go:280] fdb already populated with: 10.160.61.232 56:74:a6:20:87:9e</div><div class="line">I0722 09:45:05.103459 07773 vxlan.go:280] fdb already populated with: 10.160.61.34 ea:89:b7:02:57:2b</div><div class="line">I0722 09:45:05.103480 07773 vxlan.go:280] fdb already populated with: 10.160.61.232 22:c2:c0:9b:c9:ac</div><div class="line">I0722 09:45:05.103499 07773 vxlan.go:280] fdb already populated with: 10.160.61.82 02:50:4d:1b:e7:ae</div><div class="line">I0722 09:45:05.103517 07773 vxlan.go:280] fdb already populated with: 10.70.189.198 7a:7c:52:20:19:ca</div><div class="line">I0722 09:45:05.103558 07773 vxlan.go:280] fdb already populated with: 10.160.61.145 46:92:f9:29:2e:f3</div><div class="line">I0722 09:45:05.103602 07773 vxlan.go:280] fdb already populated with: 10.160.61.34 4a:1f:ca:23:b7:43</div><div class="line">I0722 09:45:05.103641 07773 vxlan.go:280] fdb already populated with: 10.160.61.58 7a:eb:8d:f0:bb:98</div><div class="line">I0722 09:45:05.103686 07773 device.go:176] calling NeighDel: 10.160.61.232, 56:74:a6:20:87:9e</div><div class="line">I0722 09:45:05.103805 07773 device.go:176] calling NeighDel: 10.160.61.34, ea:89:b7:02:57:2b</div><div class="line">I0722 09:45:05.103878 07773 device.go:176] calling NeighDel: 10.160.61.232, 22:c2:c0:9b:c9:ac</div><div class="line">I0722 09:45:05.103980 07773 device.go:176] calling NeighDel: 10.160.61.82, 02:50:4d:1b:e7:ae</div><div class="line">I0722 09:45:05.104045 07773 device.go:176] calling NeighDel: 10.70.189.198, 7a:7c:52:20:19:ca</div><div class="line">I0722 09:45:05.104119 07773 device.go:176] calling NeighDel: 10.160.61.145, 46:92:f9:29:2e:f3</div><div class="line">I0722 09:45:05.104182 07773 device.go:176] calling NeighDel: 10.160.61.34, 4a:1f:ca:23:b7:43</div><div class="line">I0722 09:45:05.104251 07773 device.go:176] calling NeighDel: 10.160.61.58, 7a:eb:8d:f0:bb:98</div><div class="line">I0722 09:45:05.104313 07773 device.go:164] calling NeighAdd: 10.160.61.145, 02:5c:40:4b:dd:89</div><div class="line">I0722 09:45:05.106499 07773 vxlan.go:273] Handling initial subnet events</div><div class="line">I0722 09:45:05.106534 07773 device.go:159] calling GetL2List() dev.link.Index: 7</div><div class="line">I0722 09:45:05.106643 07773 device.go:164] calling NeighAdd: 10.160.61.145, 5e:c2:7e:2b:70:d4</div><div class="line">I0722 09:41:58.244501 08996 vxlan.go:280] fdb already populated with: 10.160.61.58 d6:d3:e2:cb:91:0e</div><div class="line">I0722 09:41:58.244530 08996 device.go:176] calling NeighDel: 10.160.61.232, 56:74:a6:20:87:9e</div><div class="line">I0722 09:41:58.244638 08996 device.go:176] calling NeighDel: 10.160.61.34, ea:89:b7:02:57:2b</div><div class="line">I0722 09:41:58.244731 08996 device.go:176] calling NeighDel: 10.160.61.82, 96:c6:d3:f1:ff:f0</div><div class="line">I0722 09:41:58.244812 08996 device.go:176] calling NeighDel: 10.160.61.232, 22:c2:c0:9b:c9:ac</div><div class="line">I0722 09:41:58.244885 08996 device.go:176] calling NeighDel: 10.70.189.198, 7a:7c:52:20:19:ca</div><div class="line">I0722 09:41:58.244978 08996 device.go:176] calling NeighDel: 10.122.158.23, e2:ef:2a:db:3a:04</div><div class="line">I0722 09:41:58.245059 08996 device.go:176] calling NeighDel: 10.160.61.34, 4a:1f:ca:23:b7:43</div><div class="line">I0722 09:41:58.245146 08996 device.go:176] calling NeighDel: 10.160.61.58, d6:d3:e2:cb:91:0e</div><div class="line">I0722 09:41:58.247117 08996 vxlan.go:153] Watching for L3 misses</div><div class="line">I0722 09:41:58.247163 08996 vxlan.go:159] Watching for new subnet leases</div><div class="line">I0722 09:41:58.247952 08996 vxlan.go:273] Handling initial subnet events</div><div class="line">I0722 09:41:58.247994 08996 device.go:159] calling GetL2List() dev.link.Index: 7</div><div class="line">I0722 09:41:58.248601 08996 vxlan.go:273] Handling initial subnet events</div><div class="line">I0722 09:41:58.248642 08996 device.go:159] calling GetL2List() dev.link.Index: 6</div></pre></td></tr></table></figure>
+<h4 id="4-Choose-different-VLAN-for-docker-daemon"><a href="#4-Choose-different-VLAN-for-docker-daemon" class="headerlink" title="4. Choose different VLAN for docker daemon"></a>4. Choose different VLAN for docker daemon</h4><p><code>docker -d --bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU}</code></p>
+<h4 id="5-Go-further-to-share-the-same-bridge-for-multiple-interface"><a href="#5-Go-further-to-share-the-same-bridge-for-multiple-interface" class="headerlink" title="5. Go further to share the same bridge for multiple interface"></a>5. Go further to share the same bridge for multiple interface</h4><p><strong>Add 2 net interface to the same bridge using the same VNI.</strong>  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">etcdctl set /coreos.com/network/default/config  &apos;&#123; &quot;Network&quot;: &quot;172.31.0.0/16&quot;, &quot;Backend&quot;: &#123; &quot;Type&quot;: &quot;vxlan&quot; &#125; &#125;&apos;</div><div class="line">etcdctl set /coreos.com/network/vlan001/config  &apos;&#123; &quot;Network&quot;: &quot;10.1.0.0/16&quot;, &quot;Backend&quot;: &#123; &quot;Type&quot;: &quot;vxlan&quot; &#125; &#125;&apos;</div><div class="line"></div><div class="line">   </div><div class="line">ifconfig flannel.1</div><div class="line"></div><div class="line"></div><div class="line">5: flannel.1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN group default</div><div class="line">            inet 172.31.54.0/16 scope global flannel.1</div><div class="line">            inet 10.1.78.0/16 scope global flannel.1</div></pre></td></tr></table></figure>
+<h3 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h3><blockquote>
+<p><strong>It is possible to use the same flannel bridge to enable multiple VLAN over multiple interface.</strong></p>
+</blockquote>
+<h3 id="Configure-CNI-on-minion-node"><a href="#Configure-CNI-on-minion-node" class="headerlink" title="Configure CNI on minion node"></a>Configure CNI on minion node</h3><p>Look into more detail about <a href="https://github.com/containernetworking/cni/blob/master/SPEC.md" target="_blank" rel="external">cni</a></p>
+<h3 id="Build-plugin-of-CNI-for-flannel"><a href="#Build-plugin-of-CNI-for-flannel" class="headerlink" title="Build plugin of CNI for flannel"></a>Build plugin of CNI for flannel</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git git@github.com:containernetworking/cni.git</div><div class="line">cd cni</div><div class="line">./test</div></pre></td></tr></table></figure>
+<h3 id="Install-CNI-and-test-it"><a href="#Install-CNI-and-test-it" class="headerlink" title="Install CNI and test it"></a>Install CNI and test it</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">scp cni.tar 10.160.61.232:~/</div><div class="line">ssh 10.160.61.232 tar -C /opt -xvf cni.tar</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">cat &gt; /etc/cni/net.d/10-vlan001.conf &lt;&lt;EOF</div><div class="line">&#123;</div><div class="line">    &quot;name&quot;: &quot;vlan0001&quot;,</div><div class="line">    &quot;type&quot;: &quot;flannel&quot;,</div><div class="line">    &quot;delegate&quot;: &#123;</div><div class="line">        &quot;bridge&quot;: &quot;br-tun&quot;,</div><div class="line">        &quot;mtu&quot;: 1400</div><div class="line">    &#125;,</div><div class="line">    &quot;subnetFile&quot;: &quot;/run/flannel/networks/vlan001.env&quot;</div><div class="line">&#125;</div><div class="line">EOF</div><div class="line"></div><div class="line">apt-get install jq</div><div class="line"></div><div class="line">cd /opt/cni</div><div class="line">CNI_PATH=`pwd`/bin</div><div class="line">cd scripts</div><div class="line">sudo CNI_PATH=$CNI_PATH ./priv-net-run.sh ifconfig</div><div class="line">sudo CNI_PATH=$CNI_PATH ./docker-run.sh --rm busybox:latest ifconfig</div></pre></td></tr></table></figure>
+<h3 id="Setup-VLAN001-all-hosts"><a href="#Setup-VLAN001-all-hosts" class="headerlink" title="Setup VLAN001 all hosts"></a>Setup VLAN001 all hosts</h3><h4 id="1-Setup-CNI-for-flannel"><a href="#1-Setup-CNI-for-flannel" class="headerlink" title="1. Setup CNI for flannel"></a>1. Setup CNI for flannel</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">cat &gt; /etc/cni/net.d/10-vlan001.conf &lt;&lt;EOF</div><div class="line">&#123;</div><div class="line">    &quot;name&quot;: &quot;vlan0001&quot;,</div><div class="line">    &quot;type&quot;: &quot;flannel&quot;,</div><div class="line">    &quot;delegate&quot;: &#123;</div><div class="line">        &quot;bridge&quot;: &quot;br-tun&quot;,</div><div class="line">        &quot;mtu&quot;: 1400</div><div class="line">    &#125;,</div><div class="line">    &quot;subnetFile&quot;: &quot;/run/flannel/networks/vlan001.env&quot;</div><div class="line">&#125;</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<h4 id="2-Modify-docker-run1-sh-to-apply-different-network-configuration-for-newly-created-docker-container"><a href="#2-Modify-docker-run1-sh-to-apply-different-network-configuration-for-newly-created-docker-container" class="headerlink" title="2. Modify docker-run1.sh to apply different network configuration for newly created docker container."></a>2. Modify docker-run1.sh to apply different network configuration for newly created docker container.</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">NETCONFPATH=/etc/cni/net.d #Using default location of cfg for CNI network</div><div class="line">./exec-plugins.sh add $contid $netnspath</div><div class="line">#trap cleanup EXIT #Commet out cleanup and keep container running</div></pre></td></tr></table></figure>
+<h4 id="3-Create-new-container-using-VLAN001-on-both-host1-and-host2"><a href="#3-Create-new-container-using-VLAN001-on-both-host1-and-host2" class="headerlink" title="3. Create new container using VLAN001 on both host1 and host2"></a>3. Create new container using VLAN001 on both host1 and host2</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">export CNI_PATH=/opt/cni/bin</div><div class="line">./docker-run1.sh --rm busybox:latest ifconfig</div></pre></td></tr></table></figure>
+<h4 id="4-Result"><a href="#4-Result" class="headerlink" title="4. Result"></a>4. Result</h4><h5 id="1-ContainerA-on-Host1-using-vlan001"><a href="#1-ContainerA-on-Host1-using-vlan001" class="headerlink" title="1. ContainerA on Host1 using vlan001"></a>1. ContainerA on Host1 using vlan001</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">eth1      Link encap:Ethernet  HWaddr 32:5B:2A:AF:84:17</div><div class="line">          inet addr:10.1.71.11  Bcast:0.0.0.0  Mask:255.255.255.0</div><div class="line">          inet6 addr: fe80::305b:2aff:feaf:8417/64 Scope:Link</div><div class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1400  Metric:1</div><div class="line">          RX packets:50 errors:0 dropped:0 overruns:0 frame:0</div><div class="line">          TX packets:50 errors:0 dropped:0 overruns:0 carrier:0</div><div class="line">          collisions:0 txqueuelen:0</div><div class="line">          RX bytes:4316 (4.2 KiB)  TX bytes:4316 (4.2 KiB)</div><div class="line"></div><div class="line">10.1.71.0       *               255.255.255.0   U     0      0        0 br-tun</div></pre></td></tr></table></figure>
+<h5 id="2-ContainerB-on-Host2-using-vlan001"><a href="#2-ContainerB-on-Host2-using-vlan001" class="headerlink" title="2. ContainerB on Host2 using vlan001"></a>2. ContainerB on Host2 using vlan001</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">eth1      Link encap:Ethernet  HWaddr 82:FB:85:C3:60:A2</div><div class="line">          inet addr:10.1.78.2  Bcast:0.0.0.0  Mask:255.255.255.0</div><div class="line">          inet6 addr: fe80::80fb:85ff:fec3:60a2/64 Scope:Link</div><div class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1400  Metric:1</div><div class="line">          RX packets:56 errors:0 dropped:0 overruns:0 frame:0</div><div class="line">          TX packets:49 errors:0 dropped:0 overruns:0 carrier:0</div><div class="line">          collisions:0 txqueuelen:0</div><div class="line">          RX bytes:4832 (4.7 KiB)  TX bytes:4274 (4.1 KiB) </div><div class="line">             </div><div class="line">  10.1.78.0       *               255.255.255.0   U     0      0        0 br-tun</div></pre></td></tr></table></figure>
+<h3 id="Setup-VLAN002-on-all-hosts"><a href="#Setup-VLAN002-on-all-hosts" class="headerlink" title="Setup VLAN002 on all hosts"></a>Setup VLAN002 on all hosts</h3><h4 id="1-Setup-CNI-setting-for-flannel"><a href="#1-Setup-CNI-setting-for-flannel" class="headerlink" title="1. Setup CNI setting for flannel"></a>1. Setup CNI setting for flannel</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">mkdir -p /etc/cni/net2.d/</div><div class="line"></div><div class="line">cat &gt; /etc/cni/net2.d/10-vlan002.conf &lt;&lt;EOF</div><div class="line">&#123;</div><div class="line">    &quot;name&quot;: &quot;vlan0002&quot;,</div><div class="line">    &quot;type&quot;: &quot;flannel&quot;,</div><div class="line">    &quot;delegate&quot;: &#123;</div><div class="line">        &quot;bridge&quot;: &quot;br-tun1&quot;,</div><div class="line">        &quot;mtu&quot;: 1400</div><div class="line">    &#125;,</div><div class="line">    &quot;subnetFile&quot;: &quot;/run/flannel/networks/vlan002.env&quot;</div><div class="line">&#125;</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<h4 id="2-Modify-docker-run2-sh-to-apply-different-network-configuration-for-newly-created-docker-container"><a href="#2-Modify-docker-run2-sh-to-apply-different-network-configuration-for-newly-created-docker-container" class="headerlink" title="2. Modify docker-run2.sh to apply different network configuration for newly created docker container."></a>2. Modify docker-run2.sh to apply different network configuration for newly created docker container.</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">NETCONFPATH=/etc/cni/net2.d </div><div class="line">./exec-plugins.sh add $contid $netnspath</div></pre></td></tr></table></figure>
+<h4 id="3-Create-new-container-using-VLAN002-on-both-host1-and-host2"><a href="#3-Create-new-container-using-VLAN002-on-both-host1-and-host2" class="headerlink" title="3. Create new container using VLAN002 on both host1 and host2"></a>3. Create new container using VLAN002 on both host1 and host2</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">export CNI_PATH=/opt/cni/bin</div><div class="line">./docker-run.sh --rm busybox:latest ifconfig</div></pre></td></tr></table></figure>
+<h3 id="VLAN002-setup-for-containerA-and-ContainerB-on-different-hosts"><a href="#VLAN002-setup-for-containerA-and-ContainerB-on-different-hosts" class="headerlink" title="VLAN002 setup for containerA and ContainerB on different hosts"></a>VLAN002 setup for containerA and ContainerB on different hosts</h3><h4 id="1-ContainerC-on-Host1-using-vlan002"><a href="#1-ContainerC-on-Host1-using-vlan002" class="headerlink" title="1. ContainerC on Host1 using vlan002"></a>1. ContainerC on Host1 using vlan002</h4><pre><code>eth0      Link encap:Ethernet  HWaddr FE:07:71:04:74:CD
+          inet addr:10.2.20.5  Bcast:0.0.0.0  Mask:255.255.255.0
+          inet6 addr: fe80::fc07:71ff:fe04:74cd/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1400  Metric:1
+          RX packets:11827 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:11837 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:1150970 (1.0 MiB)  TX bytes:1151210 (1.0 MiB)
+
+10.2.20.0       *               255.255.255.0   U     0      0        0 br-tun1
+</code></pre><h4 id="2-ContainerD-on-Host2-using-vlan002"><a href="#2-ContainerD-on-Host2-using-vlan002" class="headerlink" title="2. ContainerD on Host2 using vlan002"></a>2. ContainerD on Host2 using vlan002</h4><pre><code>eth0      Link encap:Ethernet  HWaddr 0E:10:EB:05:36:C4
+          inet addr:10.2.88.2  Bcast:0.0.0.0  Mask:255.255.255.0
+          inet6 addr: fe80::c10:ebff:fe05:36c4/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1400  Metric:1
+          RX packets:9786 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:9691 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:949748 (927.4 KiB)  TX bytes:933454 (911.5 KiB)
+
+10.2.88.0       *               255.255.255.0   U     0      0        0 br-tun1
+</code></pre><h3 id="Connection-isolation-between-containers"><a href="#Connection-isolation-between-containers" class="headerlink" title="Connection isolation between containers"></a>Connection isolation between containers</h3><h4 id="1-ContainerB-reach-ContainerA-since-they-are-within-the-same-VLAN001-10-1-0-0-16"><a href="#1-ContainerB-reach-ContainerA-since-they-are-within-the-same-VLAN001-10-1-0-0-16" class="headerlink" title="1. ContainerB reach ContainerA since they are within the same VLAN001 (10.1.0.0/16)"></a>1. ContainerB reach ContainerA since they are within the same VLAN001 (10.1.0.0/16)</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">#/opt/cni/scripts# docker exec dfc448f7294e ping 10.1.78.2</div><div class="line">PING 10.1.78.2 (10.1.78.2): 56 data bytes</div><div class="line">64 bytes from 10.1.78.2: seq=0 ttl=62 time=4.039 ms</div><div class="line">64 bytes from 10.1.78.2: seq=1 ttl=62 time=1.449 ms</div><div class="line">64 bytes from 10.1.78.2: seq=2 ttl=62 time=1.489 ms</div></pre></td></tr></table></figure>
+<h4 id="2-ContainerD-reach-ContainerC-since-they-are-both-located-in-the-same-VLAN002-10-2-0-0-16"><a href="#2-ContainerD-reach-ContainerC-since-they-are-both-located-in-the-same-VLAN002-10-2-0-0-16" class="headerlink" title="2. ContainerD reach ContainerC since they are both located in the same VLAN002 (10.2.0.0/16)"></a>2. ContainerD reach ContainerC since they are both located in the same VLAN002 (10.2.0.0/16)</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">#/opt/cni/scripts# docker exec b063653e3b9a ping 10.2.20.5</div><div class="line">PING 10.2.20.5 (10.2.20.5): 56 data bytes</div><div class="line">64 bytes from 10.2.20.5: seq=0 ttl=62 time=1.636 ms</div><div class="line">64 bytes from 10.2.20.5: seq=1 ttl=62 time=1.555 ms</div><div class="line">64 bytes from 10.2.20.5: seq=2 ttl=62 time=1.566 ms</div><div class="line">64 bytes from 10.2.20.5: seq=3 ttl=62 time=1.540 ms</div></pre></td></tr></table></figure>
+<h4 id="3-containerB-does-NOT-reach-containerD-even-they-are-placed-on-the-same-host-due-to-different-VLAN"><a href="#3-containerB-does-NOT-reach-containerD-even-they-are-placed-on-the-same-host-due-to-different-VLAN" class="headerlink" title="3. containerB does NOT reach containerD even they are placed on the same host due to different VLAN"></a>3. containerB does NOT reach containerD even they are placed on the same host due to different VLAN</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">docker exec f59d50f5196d ping 10.1.71.11</div><div class="line">PING 10.1.71.11 (10.1.71.11): 56 data bytes</div><div class="line">ping: sendto: Network is unreachable</div></pre></td></tr></table></figure>
+<h4 id="4-But-ContainerD-does-NOT-reach-containerA-since-they-are-not-in-the-same-VLAN-of-flannel"><a href="#4-But-ContainerD-does-NOT-reach-containerA-since-they-are-not-in-the-same-VLAN-of-flannel" class="headerlink" title="4. But ContainerD does NOT reach containerA since they are not in the same VLAN of flannel."></a>4. But ContainerD does NOT reach containerA since they are not in the same VLAN of flannel.</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">#/opt/cni/scripts# docker exec b063653e3b9a ping 10.1.71.11</div><div class="line">ping: sendto: Network is unreachable</div><div class="line">PING 10.1.71.11 (10.1.71.11): 56 data bytes</div></pre></td></tr></table></figure>
+<h3 id="Configure-kubelet-to-enable-CNI-Flannel"><a href="#Configure-kubelet-to-enable-CNI-Flannel" class="headerlink" title="Configure kubelet to enable CNI+Flannel"></a>Configure kubelet to enable CNI+Flannel</h3><p>The CNI plugin is selected by passing Kubelet the –network-plugin=cni command-line option. Kubelet reads the first CNI configuration file from –network-plugin-dir and uses the CNI configuration from that file to set up each pod’s network. The CNI configuration file must match the CNI specification, and any required CNI plugins referenced by the configuration must be present in /opt/cni/bin. </p>
+<p>Configuration file of kublet:</p>
+<pre><code>- ubuntu: /etc/default/kubelet
+- centos: /etc/sysconf/kubelet
+</code></pre><ol>
+<li><p>Append following parameters to “KUBELET_OPTS=” </p>
+<p> <code>--network-plugin=cni --network-plugin-dir=/etc/cni/net2.d</code></p>
+</li>
+<li><p>Restart kubelet </p>
+<p> <code>service kubelet restart</code></p>
+</li>
+<li><p>ADD/DEL interface to container</p>
+<p><code>./exec-plugins.sh add &lt;container_id&gt; &lt;nspath /proc/PID/ns/net &gt;</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">NETCONFPATH=/etc/cni/net3.d ./exec-plugins.sh add  35b6274bbaeb /proc/32118/ns/net</div><div class="line">NETCONFPATH=/etc/cni/net3.d ./exec-plugins.sh del  35b6274bbaeb /proc/32118/ns/net</div></pre></td></tr></table></figure>
+</li>
+<li><p>Run an deployment to test the CNI vxlan 10.2.0.0/16, all container running inside the same VLAN could reach each other</p>
+<p> <code>kubectl run nginx-eric --image=nginx --replicas=6</code></p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@cdsdev-sjc03-hweicdl02-api-01:~# kubectl get pods -o wide|grep eric|sort -k 6</div><div class="line">nginx-eric2-4157641887-bwja1   1/1       Running            0          1h        10.2.31.232    10.160.61.232</div><div class="line">nginx-eric2-4157641887-lfpe3   1/1       Running            0          1h        10.2.31.233    10.160.61.232</div><div class="line">nginx-eric-2045285435-jecfw    1/1       Running            0          4m        10.2.31.243    10.160.61.232</div><div class="line">nginx-eric-2045285435-u9xv6    1/1       Running            0          4m        10.2.69.4      10.122.158.23</div><div class="line">nginx-eric-2045285435-k96jh    1/1       Running            0          4m        10.2.69.5      10.122.158.23</div><div class="line">nginx-eric-2045285435-9oyik    1/1       Running            0          4m        172.31.22.10   10.160.61.34</div><div class="line">nginx-eric2-4157641887-9bgqi   1/1       Running            0          1h        172.31.22.11   10.160.61.34</div><div class="line">nginx-eric-2045285435-k3cym    1/1       Running            0          4m        172.31.68.10   10.160.61.58</div><div class="line">nginx-eric2-4157641887-fqfpb   1/1       Running            0          1h        172.31.68.11   10.160.61.58</div><div class="line">nginx-eric2-4157641887-9m9ql   1/1       Running            0          26m       172.31.68.13   10.160.61.58</div><div class="line">nginx-eric-2045285435-2c9u6    1/1       Running            0          4m        172.31.69.8    10.70.189.198</div><div class="line">nginx-eric2-4157641887-uzm55   1/1       Running            0          1h        172.31.69.9    10.70.189.198</div></pre></td></tr></table></figure>
+<h3 id="Known-limitation"><a href="#Known-limitation" class="headerlink" title="Known limitation"></a>Known limitation</h3><ul>
+<li>[x] CNI plugin arguments was issue found on kubelt 1.2.4. Make sure kubelet version =&gt; 1.3</li>
+<li>[x] Lack of configurable way to enable multiple VLAN using default cni support of kubelet (master at 7/27/2016 does not support). solution: It is necessary to develop an exec plugin of cni to add and del interface, and extend the spec of yaml.</li>
+<li>[x] <code>nsenter</code> is missing on ubuntu 14.04, it is default unil-util on centos7. so strongly suggest to choose centos7+ as host rather than ubuntu.</li>
+</ul>
+<h3 id="Troubleshooting"><a href="#Troubleshooting" class="headerlink" title="Troubleshooting"></a>Troubleshooting</h3><ul>
+<li>[x]  vlan0002 : error executing ADD: no IP addresses available in network: vlan0002</li>
+</ul>
+<blockquote>
+<p>Solution: verify the last reserved ip, check if all IP address are occupied, and clean the IP address and last_reserved_ip.</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cat /var/lib/cni/networks/vlan0002/last_reserved_ip</div><div class="line"></div><div class="line">rm -rf /var/lib/cni/networks/vlan0002</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+          
+            <a href="/tags/vlan/" rel="tag"># vlan</a>
+          
+            <a href="/tags/flannel/" rel="tag"># flannel</a>
+          
+            <a href="/tags/docker/" rel="tag"># docker</a>
+          
+            <a href="/tags/cni/" rel="tag"># cni</a>
+          
+            <a href="/tags/etcd/" rel="tag"># etcd</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/26/OVS-VxLAN-on-Kubernetes/" rel="next" title="OVS VxLAN on Kubernetes">
+                <i class="fa fa-chevron-left"></i> OVS VxLAN on Kubernetes
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/29/petset-pvc/" rel="prev" title="Investigation of Kubernetes petset and PVC">
+                Investigation of Kubernetes petset and PVC <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.gif"
+               alt="Eric Li" />
+          <p class="site-author-name" itemprop="name">Eric Li</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">categories</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-name">tags</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eric Li</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="//jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="//fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="//jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="//velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="//velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="//src/utils.js?v="></script>
+
+  <script type="text/javascript" src="//src/motion.js?v="></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="//src/affix.js?v="></script>
+
+  <script type="text/javascript" src="//src/schemes/pisces.js?v="></script>
+
+
+
+  
+  <script type="text/javascript" src="//src/scrollspy.js?v="></script>
+<script type="text/javascript" src="//src/post-details.js?v="></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="//src/bootstrap.js?v="></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'cuericlee';
+      var disqus_identifier = '2016/07/27/Mutiple-VLAN-of-Flannel-network-integrated-Docker-CNI-across-hosts/';
+
+      var disqus_title = "VLAN for Flannel network integrated Docker CNI and Kubernetes across multiple hosts";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

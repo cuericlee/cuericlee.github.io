@@ -1,0 +1,655 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next " lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="//main.css?v=" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="kubernetes,petset,storage,pvc,pv," />
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Update at 2016-08-01: Re-test petset redeployment, previous PVC could be re-claim by re-deployed petset in default namespace.
+
+Abstractpetset introduced from Kubernetes 1.3 provides strong capability">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Investigation of Kubernetes petset and PVC">
+<meta property="og:url" content="http://ericculee.github.io/2016/07/29/petset-pvc/index.html">
+<meta property="og:site_name" content="Eric Li's Blog">
+<meta property="og:description" content="Update at 2016-08-01: Re-test petset redeployment, previous PVC could be re-claim by re-deployed petset in default namespace.
+
+Abstractpetset introduced from Kubernetes 1.3 provides strong capability">
+<meta property="og:updated_time" content="2017-03-17T08:42:44.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Investigation of Kubernetes petset and PVC">
+<meta name="twitter:description" content="Update at 2016-08-01: Re-test petset redeployment, previous PVC could be re-claim by re-deployed petset in default namespace.
+
+Abstractpetset introduced from Kubernetes 1.3 provides strong capability">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: '',
+    sidebar: "",
+    fancybox: ,
+    motion: ,
+    duoshuo: {
+      userId: 'undefined',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    }
+  };
+</script>
+
+
+
+
+
+
+
+  <title> Investigation of Kubernetes petset and PVC | Eric Li's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81414009-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+  
+  
+
+  <div class="container one-collumn  page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Eric Li's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://ericculee.github.io/2016/07/29/petset-pvc/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Eric Li">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Eric Li's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Eric Li's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Investigation of Kubernetes petset and PVC
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <a href="/2016/07/29/petset-pvc/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/07/29/petset-pvc/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <ul>
+<li>Update at 2016-08-01: Re-test petset redeployment, previous PVC could be re-claim by re-deployed petset in default namespace.</li>
+</ul>
+<h3 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a><strong>Abstract</strong></h3><p><code>petset</code> introduced from Kubernetes 1.3 provides strong capability to scale out/in an persistent service thru persistent claim abstraction and namespace management. petset is really suitable for an persistent service deployment, e.g. database deployment.</p>
+<p>In this article, I will address the extensible usage for petset with both shared storage and iosolated storage. In addition, and I exposed a couple of limitation and solution for database deployment using <code>petset</code>. (alpha. Kubernetes v1.3.2)</p>
+<ul>
+<li><ol>
+<li>namespace of PersistentVolumeClaim seems not supported well in v1.3.2. When user deploy petset to different namespace than <code>default</code>, <code>PersistentVolumeClaim is not bound</code> failure led to failure of overall deployment.</li>
+</ol>
+</li>
+<li><ol>
+<li>Zombie PV resource</li>
+</ol>
+</li>
+</ul>
+<h3 id="Deploy-Petset-with-shared-storage"><a href="#Deploy-Petset-with-shared-storage" class="headerlink" title="Deploy Petset with shared storage"></a>Deploy Petset with shared storage</h3><p>Petset deployment leverage volumeClaimTemplates to claim storage dynamically for scale out/in. I am trying to attach shared storage for each pod of petset for specific needs when databases deployment require shared meta data across cluster.</p>
+<script src="https://gist.github.com/cuericlee/6b750f0afc422f0e0cabc53db955aee7.js"></script>
+
+<h4 id="Advantage-Scale-out-scale-in"><a href="#Advantage-Scale-out-scale-in" class="headerlink" title="Advantage: Scale out / scale in"></a>Advantage: Scale out / scale in</h4><p>Pactch an petset to scale out an mysql deployment <code>kubectl patch petset mysql -p &#39;{&quot;spec&quot;: {&quot;replicas&quot;: &lt;number&gt;}}&#39;</code>, newly created mysql become available in 35s.</p>
+<pre><code>kubectl get pod
+NAME      READY     STATUS    RESTARTS   AGE
+mysql-0   1/1       Running   0          1h
+mysql-1   1/1       Running   0          1h
+mysql-2   1/1       Running   0          19m
+mysql-3   1/1       Running   0          18m
+root@# kubectl patch petset mysql -p &apos;{&quot;spec&quot;: {&quot;replicas&quot;: 2}}&apos;
+&quot;mysql&quot; patched
+root@# kubectl get pod
+NAME      READY     STATUS    RESTARTS   AGE
+mysql-0   1/1       Running   0          1h
+mysql-1   1/1       Running   0          1h
+root@# kubectl patch petset mysql -p &apos;{&quot;spec&quot;: {&quot;replicas&quot;: 4}}&apos;
+&quot;mysql&quot; patched
+kubectl get pod
+NAME      READY     STATUS    RESTARTS   AGE
+mysql-0   1/1       Running   0          2h
+mysql-1   1/1       Running   0          2h
+mysql-2   1/1       Running   0          38s
+mysql-3   0/1       Running   0          7s
+</code></pre><h3 id="Advantage-Database-Cluster-Failover-with-petset"><a href="#Advantage-Database-Cluster-Failover-with-petset" class="headerlink" title="Advantage: Database Cluster Failover with petset"></a>Advantage: Database Cluster Failover with petset</h3><ul>
+<li><p>Recover an database cluster using existing data volume after <code>petset</code> is deleted from k8s. Once an petset was re-created (delete/create), all PVCs were kept. previously claimed PVC could be re-claimed by re-created petset.  So petset give much flexibility, at mean time, users lost the full control on recovery operation. e.g. Uisng pod/rc,  database could be recovered well using existing data PVC, PV or volume easily.</p>
+</li>
+<li><p>So petset give much flexibility, at mean time, users could recovery petset with existing volume claimed.</p>
+</li>
+<li><p>Petset re-claim policy: <petid>-<index></index></petid></p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">// GetClaimsForPet returns the pvcs for the given pet.</div><div class="line">func (v *VolumeIdentityMapper) GetClaimsForPet(pet *api.Pod) []api.PersistentVolumeClaim &#123;</div><div class="line">    // Strip out the &quot;-(index)&quot; from the pet name and use it to generate</div><div class="line">    // claim names.</div><div class="line">    id := strings.Split(pet.Name, &quot;-&quot;)</div><div class="line">    petID := id[len(id)-1]</div><div class="line">    pvcs := []api.PersistentVolumeClaim&#123;&#125;</div><div class="line">    for _, pvc := range v.GetClaims(petID) &#123;</div><div class="line">        pvcs = append(pvcs, pvc)</div><div class="line">    &#125;</div><div class="line">    return pvcs</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">// GetClaims returns the volume claims associated with the given id.</div><div class="line">// The claims belong to the petset. The id should be unique within a petset.</div><div class="line">func (v *VolumeIdentityMapper) GetClaims(id string) map[string]api.PersistentVolumeClaim &#123;</div><div class="line">    petClaims := map[string]api.PersistentVolumeClaim&#123;&#125;</div><div class="line">    for _, pvc := range v.ps.Spec.VolumeClaimTemplates &#123;</div><div class="line">        claim := pvc</div><div class="line">        // TODO: Name length checking in validation.</div><div class="line">        claim.Name = fmt.Sprintf(&quot;%v-%v-%v&quot;, claim.Name, v.ps.Name, id)</div><div class="line">        claim.Namespace = v.ps.Namespace</div><div class="line">        claim.Labels = v.ps.Spec.Selector.MatchLabels</div><div class="line"></div><div class="line">        // TODO: We&apos;re assuming that the claim template has a volume QoS key, eg:</div><div class="line">        // volume.alpha.kubernetes.io/storage-class: anything</div><div class="line">        petClaims[pvc.Name] = claim</div><div class="line">    &#125;</div><div class="line">    return petClaims</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Limitation-1-namespace-of-PersistentVolumeClaim"><a href="#Limitation-1-namespace-of-PersistentVolumeClaim" class="headerlink" title="Limitation 1: namespace of PersistentVolumeClaim"></a>Limitation 1: namespace of PersistentVolumeClaim</h3><p>namespace of PersistentVolumeClaim seems not supported well in v1.3.2.</p>
+<p>Controller failed to bind an claim even PVC were claimed well. Looks like an bug on petset impl today.</p>
+<pre><code> 6m            6m              1       {default-scheduler }                                    Warning         FailedScheduling        [PersistentVolumeClaim is not bound: &quot;datadir-mysql-0&quot;, PersistentVolumeClaim is not bound: &quot;datadir-mysql-0&quot;, PersistentVolumeClaim is not bound: &quot;datadir-mysql-0&quot;, PersistentVolumeClaim is not bound: &quot;datadir-mysql-0&quot;]
+
+ kubectl get pvc --namespace=petset-sharedfs
+NAME                STATUS    VOLUME    CAPACITY   ACCESSMODES   AGE
+datadir-mysql-0     Bound     spv21     0                        33m
+datadir-mysql-1     Bound     spv22     0                        33m
+datadir-mysql-2     Bound     spv23     0                        33m
+shared-head-claim   Bound     spv20     0                        2h
+</code></pre><h4 id="Solution"><a href="#Solution" class="headerlink" title="Solution:"></a>Solution:</h4><ol>
+<li>Followup issue fix and watch source change.</li>
+</ol>
+<h3 id="Limitation-2-Zombie-PV-resource"><a href="#Limitation-2-Zombie-PV-resource" class="headerlink" title="Limitation 2: Zombie PV resource"></a>Limitation 2: Zombie PV resource</h3><p>Once user delete PVC of petset deployment. PV become ‘Released’ status. These PV resource become zombie since they are not allocated again by k8s controller.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">spv1      1Gi        RWX           Released    default/datadir-mysql-1                       18h</div><div class="line">spv12     1Gi        RWX           Released    petset-sharedfs/shared-head-claim             1h</div><div class="line">spv13     1Gi        RWX           Bound       default/datadir-mysql-0                       4m</div><div class="line">spv14     1Gi        RWX           Released       petset-sharedfs/shared-head-claim             4m</div></pre></td></tr></table></figure>
+<ul>
+<li>Pending claim when PV become released status</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@# kubectl get pvc --namespace=test</div><div class="line">            NAME                STATUS    VOLUME    CAPACITY   ACCESSMODES   AGE</div><div class="line">            shared-head-claim   Pending                                      45s</div><div class="line"></div><div class="line">root# kubectl describe pvc --namespace=test</div><div class="line">            Name:           shared-head-claim</div><div class="line">            Namespace:      test</div><div class="line">            Status:         Pending</div><div class="line">            Volume:</div><div class="line">            Labels:         &lt;none&gt;</div><div class="line">            Capacity:</div><div class="line">            Access Modes:</div><div class="line">            No events.</div></pre></td></tr></table></figure>
+<ul>
+<li>Controller failed to re-claim PV in released status</li>
+</ul>
+<p>E0728 02:18:02.307295   10626 factory.go:517] Error scheduling default mysql-0: [PersistentVolumeClaim is not bound: “datadir-mysql-0”, PersistentVolumeClaim is not bound: “datadir-mysql-0”, PersistentVolumeClaim is not bound: “datadir-mysql-0”, PersistentVolumeClaim is not bound: “datadir-mysql-0”]; retrying</p>
+<h4 id="Solution-to-recycle-recover-zombie-PV-resource"><a href="#Solution-to-recycle-recover-zombie-PV-resource" class="headerlink" title="Solution to recycle/recover zombie PV resource"></a>Solution to recycle/recover zombie PV resource</h4><p>Set PV status from ‘Released’ to ‘Available’ thru <code>etcdctl</code>. Then we could recover Pod of petset using exiting data. </p>
+<ul>
+<li>Retrieve meta data of PV in released status</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root@# etcdctl get /registry/persistentvolumes/spv14</div><div class="line">        &#123;&quot;kind&quot;:&quot;PersistentVolume&quot;,&quot;apiVersion&quot;:&quot;v1&quot;,&quot;metadata&quot;:&#123;&quot;name&quot;:&quot;spv14&quot;,&quot;selfLink&quot;:&quot;/api/v1/persistentvolumes/spv14&quot;,&quot;uid&quot;:&quot;aca33faa-5493-11e6-a022-0cc47a662568&quot;,&quot;creationTimestamp&quot;:&quot;2016-07-28T07:19:51Z&quot;,&quot;annotations&quot;:&#123;&quot;pv.kubernetes.io/bound-by-controller&quot;:&quot;yes&quot;&#125;&#125;,&quot;spec&quot;:&#123;&quot;capacity&quot;:&#123;&quot;storage&quot;:&quot;1Gi&quot;&#125;,&quot;nfs&quot;:&#123;&quot;server&quot;:&quot;169.55.11.79&quot;,&quot;path&quot;:&quot;/gpfs/fs01/shared/prod/spv14&quot;&#125;,&quot;accessModes&quot;:[&quot;ReadWriteMany&quot;],&quot;claimRef&quot;:&#123;&quot;kind&quot;:&quot;PersistentVolumeClaim&quot;,&quot;namespace&quot;:&quot;petset-sharedfs&quot;,&quot;name&quot;:&quot;shared-head-claim&quot;,&quot;uid&quot;:&quot;0ca05fed-5494-11e6-a022-0cc47a662568&quot;,&quot;apiVersion&quot;:&quot;v1&quot;,&quot;resourceVersion&quot;:&quot;46240&quot;&#125;,&quot;persistentVolumeReclaimPolicy&quot;:&quot;Retain&quot;&#125;,&quot;status&quot;:&#123;&quot;phase&quot;:&quot;Released&quot;&#125;&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Update PV meta data thru removing claimRef</li>
+</ul>
+<p><code>&quot;claimRef&quot;:{&quot;kind&quot;:&quot;PersistentVolumeClaim&quot;,&quot;namespace&quot;:&quot;petset-sharedfs&quot;,&quot;name&quot;:&quot;shared-head-claim&quot;,&quot;uid&quot;:&quot;0ca05fed-5494-11e6-a022-0cc47a662568&quot;,&quot;apiVersion&quot;:&quot;v1&quot;,&quot;resourceVersion&quot;:&quot;46240&quot;}&quot;</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">root@# etcdctl set /registry/persistentvolumes/spv14 &apos;&#123;&quot;kind&quot;:&quot;PersistentVolume&quot;,&quot;apiVersion&quot;:&quot;v1&quot;,&quot;metadata&quot;:&#123;&quot;name&quot;:&quot;spv14&quot;,&quot;selfLink&quot;:&quot;/api/v1/persistentvolumes/spv14&quot;,&quot;uid&quot;:&quot;aca33faa-5493-11e6-a022-0cc47a662568&quot;,&quot;creationTimestamp&quot;:&quot;2016-07-28T07:19:51Z&quot;,&quot;annotations&quot;:&#123;&quot;pv.kubernetes.io/bound-by-controller&quot;:&quot;yes&quot;&#125;&#125;,&quot;spec&quot;:&#123;&quot;capacity&quot;:&#123;&quot;storage&quot;:&quot;1Gi&quot;&#125;,&quot;nfs&quot;:&#123;&quot;server&quot;:&quot;169.55.11.79&quot;,&quot;path&quot;:&quot;/gpfs/fs01/shared/prod/spv14&quot;&#125;,&quot;accessModes&quot;:[&quot;ReadWriteMany&quot;],&quot;persistentVolumeReclaimPolicy&quot;:&quot;Retain&quot;&#125;,&quot;status&quot;:&#123;&quot;phase&quot;:&quot;Available&quot;&#125;&#125;&apos;</div></pre></td></tr></table></figure>
+<ul>
+<li>Verify PV become available.</li>
+</ul>
+<p><code>root@:/nfs/petset# etcdctl get /registry/persistentvolumes/spv14</code></p>
+<p><code>kubectl get pv</code></p>
+<pre><code>spv14     1Gi        RWX           Available                                                 1h
+</code></pre>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+          
+            <a href="/tags/petset/" rel="tag"># petset</a>
+          
+            <a href="/tags/storage/" rel="tag"># storage</a>
+          
+            <a href="/tags/pvc/" rel="tag"># pvc</a>
+          
+            <a href="/tags/pv/" rel="tag"># pv</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/27/Mutiple-VLAN-of-Flannel-network-integrated-Docker-CNI-across-hosts/" rel="next" title="VLAN for Flannel network integrated Docker CNI and Kubernetes across multiple hosts">
+                <i class="fa fa-chevron-left"></i> VLAN for Flannel network integrated Docker CNI and Kubernetes across multiple hosts
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/01/Waston-Strength/" rel="prev" title="Waston Strength">
+                Waston Strength <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.gif"
+               alt="Eric Li" />
+          <p class="site-author-name" itemprop="name">Eric Li</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">categories</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-name">tags</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eric Li</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="//jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="//fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="//jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="//velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="//velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="//src/utils.js?v="></script>
+
+  <script type="text/javascript" src="//src/motion.js?v="></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="//src/affix.js?v="></script>
+
+  <script type="text/javascript" src="//src/schemes/pisces.js?v="></script>
+
+
+
+  
+  <script type="text/javascript" src="//src/scrollspy.js?v="></script>
+<script type="text/javascript" src="//src/post-details.js?v="></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="//src/bootstrap.js?v="></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'cuericlee';
+      var disqus_identifier = '2016/07/29/petset-pvc/';
+
+      var disqus_title = "Investigation of Kubernetes petset and PVC";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

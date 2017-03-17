@@ -1,0 +1,852 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next " lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="//main.css?v=" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Eric Li's Blog">
+<meta property="og:url" content="http://ericculee.github.io/index.html">
+<meta property="og:site_name" content="Eric Li's Blog">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Eric Li's Blog">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: '',
+    sidebar: "",
+    fancybox: ,
+    motion: ,
+    duoshuo: {
+      userId: 'undefined',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    }
+  };
+</script>
+
+
+
+
+
+
+
+  <title> Eric Li's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81414009-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+  
+  
+
+  <div class="container one-collumn  
+   page-home 
+ ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Eric Li's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+  <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://ericculee.github.io/2017/03/17/Cisco-AnyConnect-failed-to-establish-connectivity/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Eric Li">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Eric Li's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Eric Li's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/03/17/Cisco-AnyConnect-failed-to-establish-connectivity/" itemprop="url">
+                  Cisco AnyConnect failed to establish connectivity
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <a href="/2017/03/17/Cisco-AnyConnect-failed-to-establish-connectivity/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/17/Cisco-AnyConnect-failed-to-establish-connectivity/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h3><p>Issue: Cisco AnyConnect failed to establish connectivity to VPN server due to hostscan state idel, TOKEN_INVALID, unable to init cert verification.<br>Root cause: unable to init cert verification due to Java certification validation (Java 1.8.0 121) </p>
+<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution:"></a>Solution:</h3><p>You has following 6 actions to resume your vpn client of Cisco AnyConnect. Mostly you can resolve issue thru actions No. 4 and No. 5 due to java security validation issue.</p>
+<ol>
+<li>“rm ~/.anyconnect”</li>
+<li><p>regenerate the p12 certs from website of your company and import certs to your Mac.  <a href="https://mobile.us.ibm.com:15048/tools/vpn/enduser/userdevice.php" target="_blank" rel="external">IBM</a><br> Notice: Delete previous all IBM VPN Intermediate CA from your keychains.</p>
+</li>
+<li><p>Double click on the P12 download from website, d select Open to import it using the Keychain Access utility</p>
+</li>
+<li><p><strong>Important: Delete all IBM Internal Root CA, IBM VPN Intermediate CA, Your private key from system chain, just leave these 3 in login chain</strong><br><img src="/images/14897297333203.jpg" alt=""></p>
+</li>
+<li><p>Login from Firefox <a href="https://(your" target="_blank" rel="external">https://(your</a> vpn endpoint)/CACHE/stc/2/index.html (e.g. <a href="https://sasvpn01.cn.ibm.com/CACHE/stc/2/index.html" target="_blank" rel="external">https://sasvpn01.cn.ibm.com/CACHE/stc/2/index.html</a>) to validate your certs and java runtime has been setup successfully.</p>
+</li>
+<li>reinstall Cisco AnyConnect.</li>
+<li>If below expired certs message prompt, add url to the exception as websites.<br><img src="/images/14897299944969.jpg" alt=""> <h3 id="Troubleshooting"><a href="#Troubleshooting" class="headerlink" title="Troubleshooting"></a>Troubleshooting</h3></li>
+</ol>
+<ol>
+<li>Open Java Console from System Preference to enable debug,trace for expired certs.</li>
+<li>Logging of cisco<pre><code>tail -f /var/log/system.log
+find ~/.cisco 
+tail -f ~/.cisco/hostscan/log/cscan.log 
+tail -f ~/.cisco/hostscan/log/libcsd.log 
+tail -f ~/.cisco/hostscan/log/cstub.log
+</code></pre></li>
+<li><p>Configuration of VPN client</p>
+<p><code>~/.anyconnect</code></p>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://ericculee.github.io/2017/02/07/autoscale-crossAZ-span-vlan-cluster/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Eric Li">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Eric Li's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Eric Li's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/02/07/autoscale-crossAZ-span-vlan-cluster/" itemprop="url">
+                  Autoscale workload over Span-VLAN k8s cluster
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <a href="/2017/02/07/autoscale-crossAZ-span-vlan-cluster/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/02/07/autoscale-crossAZ-span-vlan-cluster/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Span-VLAN-k8s-cluster-Env"><a href="#Span-VLAN-k8s-cluster-Env" class="headerlink" title="Span-VLAN k8s cluster Env"></a>Span-VLAN k8s cluster Env</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">:..........:........................:...............:................:............:........:</div><div class="line">:    id    :        hostname        :   primary_ip  :   backend_ip   : datacenter : action :  public vlan/private vlan</div><div class="line">:..........:........................:...............:................:............:........:</div><div class="line">: 27407789 : hydra-calico-dal09-m01 : 169.46.186.87 :  10.173.49.4   :   dal09    :   -    :   1213/1319</div><div class="line">: 27407791 : hydra-calico-dal09-w01 : 169.45.171.24 : 10.155.230.151 :   dal09    :   -    :  996/968</div><div class="line">: 27407793 : hydra-calico-dal09-w02 :  169.45.131.2 :  10.153.86.9   :   dal09    :   -    :  959/1211</div><div class="line">: 27407873 : hydra-calico-dal10-w03 : 169.47.195.84 :  10.171.90.69  :   dal10    :   -    :  1136/1197</div><div class="line">: 27407875 : hydra-calico-dal10-w04 : 169.47.195.88 :  10.171.90.94  :   dal10    :   -    :  1136/1197</div><div class="line">:..........:........................:...............:................:............:........:</div><div class="line"></div><div class="line">root@hydra-calico-dal09-m01:~# kubectl get nodes --show-labels|grep zone</div><div class="line">10.153.86.9      Ready                         26d       beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,beta.kubernetes.io/zone=dal09,kubernetes.io/hostname=10.153.86.9</div><div class="line">10.171.90.94     Ready                         26d       beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,beta.kubernetes.io/zone=dal10,kubernetes.io/hostname=10.171.90.94</div></pre></td></tr></table></figure>
+<p>10.171.90.94: zone=dal10<br>10.153.86.9: zone=dal9</p>
+<h3 id="deploy-an-nginx-deployment"><a href="#deploy-an-nginx-deployment" class="headerlink" title="deploy an nginx deployment"></a>deploy an nginx deployment</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">kubectl run nginx-hpa --image=nginx --requests=cpu=100m,memory=50M --expose --port=80</div><div class="line"></div><div class="line">kubectl get deployment</div></pre></td></tr></table></figure>
+<h3 id="run-an-test-against-apache-server"><a href="#run-an-test-against-apache-server" class="headerlink" title="run an test against apache server."></a>run an test against apache server.</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">kubectl run -i --tty service-test --image=busybox /bin/sh</div><div class="line"></div><div class="line">$ wget -q -O- http://nginx-hpa.default.svc.cluster.local</div><div class="line"></div><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">&lt;title&gt;Welcome to nginx!&lt;/title&gt;</div><div class="line">&lt;style&gt;</div><div class="line">    body &#123;</div><div class="line">        width: 35em;</div><div class="line">        margin: 0 auto;</div><div class="line">        font-family: Tahoma, Verdana, Arial, sans-serif;</div><div class="line">    &#125;</div><div class="line">&lt;/style&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">&lt;h1&gt;Welcome to nginx!&lt;/h1&gt;</div><div class="line">&lt;p&gt;If you see this page, the nginx web server is successfully installed and</div><div class="line">working. Further configuration is required.&lt;/p&gt;</div><div class="line"></div><div class="line">&lt;p&gt;For online documentation and support please refer to</div><div class="line">&lt;a href=&quot;http://nginx.org/&quot;&gt;nginx.org&lt;/a&gt;.&lt;br/&gt;</div><div class="line">Commercial support is available at</div><div class="line">&lt;a href=&quot;http://nginx.com/&quot;&gt;nginx.com&lt;/a&gt;.&lt;/p&gt;</div><div class="line"></div><div class="line">&lt;p&gt;&lt;em&gt;Thank you for using nginx.&lt;/em&gt;&lt;/p&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure>
+<h3 id="manually-scale-out-application-cross-zone-dal9-and-dal10"><a href="#manually-scale-out-application-cross-zone-dal9-and-dal10" class="headerlink" title="manually scale out application cross zone dal9 and dal10"></a>manually scale out application cross zone dal9 and dal10</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"> $ kubectl scale deployment nginx-hpa --replicas=2</div><div class="line">deployment &quot;nginx-hpa&quot; scaled</div><div class="line"></div><div class="line">kubectl get pod -o wide|grep hpa</div><div class="line">nginx-hpa-2266641329-901jn        1/1       Running   0          19m       10.171.29.98    10.171.90.94 &lt;= dal10</div><div class="line">nginx-hpa-2266641329-zmnrg        1/1       Running   0          8m        10.98.23.204    10.153.86.9 &lt;=dal9</div></pre></td></tr></table></figure>
+<h3 id="autoscale-set-target-cpu-usage-with-30"><a href="#autoscale-set-target-cpu-usage-with-30" class="headerlink" title="autoscale, set target cpu usage with 30%"></a>autoscale, set target cpu usage with 30%</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line">kubectl autoscale deployment nginx-hpa --cpu-percent=30 --min=2 --max=10</div><div class="line"></div><div class="line">kubectl get hpa</div><div class="line">NAME          REFERENCE                TARGET    CURRENT   MINPODS   MAXPODS   AGE</div><div class="line">nginx-hpa     Deployment/nginx-hpa     30%       0%        2         10        4s</div></pre></td></tr></table></figure>
+<h3 id="raising-workload-with-10-concurrent-query-threads-to-reach-threshold-of-CPU-usage"><a href="#raising-workload-with-10-concurrent-query-threads-to-reach-threshold-of-CPU-usage" class="headerlink" title="raising workload with 10 concurrent query threads to reach threshold of CPU usage"></a>raising workload with 10 concurrent query threads to reach threshold of CPU usage</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">kubectl run -i --tty load-generator --image=busybox /bin/sh</div><div class="line"></div><div class="line">while true; do wget -q -O- http://nginx-hpa.default.svc.cluster.local &amp;&gt;/dev/null;done &amp;</div></pre></td></tr></table></figure>
+<h3 id="result-pod-scale-out-from-2-to-3"><a href="#result-pod-scale-out-from-2-to-3" class="headerlink" title="result: pod scale out from 2 to 3"></a>result: pod scale out from 2 to 3</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">$ kubectl get hpa</div><div class="line">NAME          REFERENCE                TARGET    CURRENT   MINPODS   MAXPODS   AGE</div><div class="line">nginx-hpa     Deployment/nginx-hpa     30%       67%       2         10        5m</div><div class="line"></div><div class="line"></div><div class="line">$ kubectl get pod -o wide|grep hpa</div><div class="line">nginx-hpa-2266641329-2l98k        1/1       Running   0          14s       10.98.23.206    10.153.86.9 &lt;= **newly created pod**</div><div class="line">nginx-hpa-2266641329-901jn        1/1       Running   0          38m       10.171.29.98    10.171.90.94</div><div class="line">nginx-hpa-2266641329-zmnrg        1/1       Running   0          27m       10.98.23.204    10.153.86.9</div></pre></td></tr></table></figure>
+<h3 id="drain-application-from-availability-zone-dal9-to-zone-dal10-online"><a href="#drain-application-from-availability-zone-dal9-to-zone-dal10-online" class="headerlink" title="drain application from availability zone dal9 to zone dal10 online"></a>drain application from availability zone dal9 to zone dal10 online</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">$kubectl drain 10.153.86.9</div><div class="line"></div><div class="line">node &quot;10.153.86.9&quot; cordoned</div><div class="line">pod &quot;nginx-hpa-2266641329-zmnrg&quot; evicted</div><div class="line">pod &quot;nginx-hpa-2266641329-2l98k&quot; evicted</div><div class="line">node &quot;10.153.86.9&quot; drained</div><div class="line"></div><div class="line">$kubectl get pod -o wide|grep hpa</div><div class="line">nginx-hpa-2266641329-5w5jt        1/1       Running   0          1m        10.171.29.104   10.171.90.94</div><div class="line">nginx-hpa-2266641329-901jn        1/1       Running   0          47m       10.171.29.98    10.171.90.94</div><div class="line">nginx-hpa-2266641329-wzwhm        1/1       Running   0          1m        10.171.29.107   10.171.90.94</div></pre></td></tr></table></figure>
+<h4 id="limitation-local-data-could-not-be-reserved-after-drain-app-from-one-available-zone-to-another-one"><a href="#limitation-local-data-could-not-be-reserved-after-drain-app-from-one-available-zone-to-another-one" class="headerlink" title="limitation. local data could not be reserved after drain app from one available zone to another one."></a>limitation. local data could not be reserved after drain app from one available zone to another one.</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">error: pods with local storage (use --delete-local-data to override): monitoring-grafana-3730655072-g667m, monitoring-influxdb-957705310-s144d</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://ericculee.github.io/2016/11/14/research-on-container-network/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Eric Li">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Eric Li's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Eric Li's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/11/14/research-on-container-network/" itemprop="url">
+                  Research on container network of Kubernetes
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <a href="/2016/11/14/research-on-container-network/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/11/14/research-on-container-network/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Network-provider-research"><a href="#Network-provider-research" class="headerlink" title="Network provider research"></a>Network provider research</h2><table>
+<thead>
+<tr>
+<th>provider</th>
+<th>k8s version</th>
+<th>k8s network policy</th>
+<th>pros</th>
+<th>cons</th>
+<th>thoughoutput /%direct</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>flannel vxlan</td>
+<td>&gt;= 1.2</td>
+<td>no</td>
+<td>1) easy to configure <br> 2) easy to span VLAN/datacenter</td>
+<td>1) Broadcast flood to 192.168.0.0/16 since no exact ip route setting. <br>2) <a href="">performance downgrade</a> <br> 3) network isolation needs extra subnet mgt. efforts</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>flannel host-gw</td>
+<td>&gt;= 1.2</td>
+<td>no</td>
+<td>1) easy to configure<br> 2) no obvious performance downgrade</td>
+<td>1) To span multiple subnets in a vlan, need extra steps to add routing rules <br> 2) can’t span multiple vlans, datacenters. <br> 3) doesn’t support network policy<br> 4) network isolation needs extra subnet mgt. efforts</td>
+<td>93%</td>
+</tr>
+<tr>
+<td>calico</td>
+<td>&gt;= 1.3</td>
+<td>yes</td>
+<td>1) <code>bird</code> agents configure routes  with BGP on each node.<br> 2) flexible subnets expansiton with ip address pool mgmt<br> 3) support k8s network policy <br> 4) enable <code>-ipip</code> to support cross L2 VLAN.</td>
+<td>1) arch is complex, management of bird and felix, need higher learning carve for deployment, debugging, operation <br> 2) when enabling <code>-ipip</code>, introduce additional packet encapsulation with significant performance downgrade.</td>
+<td>BGP:93% vs BGP+ipip:64%</td>
+</tr>
+<tr>
+<td>canal (calico + flannel vxlan)</td>
+<td>&gt;= 1.3</td>
+<td>yes</td>
+<td>1) support vxlan to cross L2. <br>2) Network policy support extended from Felix of calico. <br>3) smooth migration from existing flannel to calico</td>
+<td>1)significant performance downgrade due to packet encapsulation and broadcast flood. <br>2) Double complexity</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>calico + IaaS IP address (SL portableIP) + hostAffirnity</td>
+<td>&gt;= 1.3</td>
+<td>yes</td>
+<td>1) consist network IP address space as IaaS env. <br> 2) Network policy support.</td>
+<td>1) No L2 support to cross VLAN. <br> 2) enable subnet of hostAffirnity and integrate application of ip address space from IaaS.</td>
+<td>93%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="Flannel"><a href="#Flannel" class="headerlink" title="Flannel"></a>Flannel</h3><h4 id="Summary-of-flannel-over-“vxlan”-and-“host-gw”"><a href="#Summary-of-flannel-over-“vxlan”-and-“host-gw”" class="headerlink" title="Summary of flannel over “vxlan” and “host-gw”"></a>Summary of flannel over “vxlan” and “host-gw”</h4><blockquote>
+<p>:star: <code>vxlan</code> is the default backend type of ubuntu k8s deployment. The container-to-container test result above (1.37 G/sec) performs <strong>~50%</strong> of the raw host-to-host result (3.02 G/sec).<br>:star: “host-gw” leverage the kernel route table with “ip routes” to route traffic to target host. The container-to-container test result above (2.84 G/sec) performs <strong>~93%</strong> of the raw host-to-host result (3.02 G/sec)</p>
+</blockquote>
+<p>container to container over vxlan</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ docker run  -it --rm networkstatic/iperf3 -c 172.31.71.4</div><div class="line">Connecting to host 172.31.71.4, port 5201</div><div class="line">[  4] local 172.31.15.4 port 57807 connected to 172.31.71.4 - - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line">[ ID] Interval           Transfer     Bandwidth       Retr</div><div class="line">[  4]   0.00-10.00  sec  1.60 GBytes  1.37 Gbits/sec  398             sender</div><div class="line">[  4]   0.00-10.00  sec  1.60 GBytes  1.37 Gbits/sec                  receiver</div></pre></td></tr></table></figure>
+<p>container to container over host-gw<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">- - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line">[ ID] Interval           Transfer     Bandwidth       Retr</div><div class="line">[  4]   0.00-10.00  sec  3.31 GBytes  2.85 Gbits/sec  284             sender</div><div class="line">[  4]   0.00-10.00  sec  3.31 GBytes  2.84 Gbits/sec                  receiver</div></pre></td></tr></table></figure></p>
+<h3 id="Calico"><a href="#Calico" class="headerlink" title="Calico"></a>Calico</h3><h4 id="Summary-of-calico-BGP-and-calico-BGP-ipip"><a href="#Summary-of-calico-BGP-and-calico-BGP-ipip" class="headerlink" title="Summary of calico BGP and calico BGP+ipip"></a>Summary of calico BGP and calico BGP+ipip</h4><blockquote>
+<p>:star: “calico BGP(node to node mesh)” is similar to “host-gw”. about 93%+ performance of direct connection.<br>:star: “calico BGP + <code>-ipip</code>(node to node mesh)” is similar to “vxlan”. it is about 64%+ performance of direct connection due to packet escapsulation, but it is better than “vxlan” without broadcast flood due to appropriate ip routes setting. Significant negative performance impact even for connection in the same VLAN.</p>
+</blockquote>
+<p>BGP without ipip</p>
+<p>host to host (in the same VLAN)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Connecting to host 10.177.83.70, port 5201</div><div class="line">[  4] local 10.177.83.83 port 39122 connected to 10.177.83.70 port 5201</div><div class="line">- - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line">[ ID] Interval           Transfer     Bandwidth       Retr</div><div class="line">[  4]   0.00-10.00  sec  3.71 GBytes  3.19 Gbits/sec    0             sender</div><div class="line">[  4]   0.00-10.00  sec  3.71 GBytes  3.18 Gbits/sec                  receiver</div></pre></td></tr></table></figure></p>
+<p>Container to container over BGP node to node mesh(same VLAN)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"> ID] Interval           Transfer     Bandwidth       Retr</div><div class="line">[  4]   0.00-10.00  sec  3.45 GBytes  2.97 Gbits/sec  608             sender</div><div class="line">[  4]   0.00-10.00  sec  3.45 GBytes  2.96 Gbits/sec                  receiver</div></pre></td></tr></table></figure>
+<p><strong>Container to container over BGP+<code>-ipip</code> (same VLAN)</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[ ID] Interval           Transfer     Bandwidth       Retr</div><div class="line">[  4]   0.00-10.00  sec  2.37 GBytes  2.03 Gbits/sec    3             sender</div><div class="line">[  4]   0.00-10.00  sec  2.36 GBytes  2.03 Gbits/sec                  receiver</div></pre></td></tr></table></figure></p>
+<p><strong>Container to container over BGP+<code>-ipip</code> (cross VLAN)</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[ ID] Interval           Transfer     Bandwidth       Retr</div><div class="line">[  4]   0.00-10.00  sec  2.47 GBytes  2.12 Gbits/sec  556             sender</div><div class="line">[  4]   0.00-10.00  sec  2.46 GBytes  2.12 Gbits/sec                  receiver</div></pre></td></tr></table></figure>
+<p>host to host (cross vlan)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[ ID] Interval           Transfer     Bandwidth       Retr</div><div class="line">[  4]   0.00-10.00  sec  4.43 GBytes  3.81 Gbits/sec  1742             sender</div><div class="line">[  4]   0.00-10.00  sec  4.43 GBytes  3.81 Gbits/sec                  receiver</div></pre></td></tr></table></figure>
+<h3 id="AWS-VPC-network"><a href="#AWS-VPC-network" class="headerlink" title="AWS VPC network"></a>AWS VPC network</h3><h4 id="Summary-of-aws-vpc"><a href="#Summary-of-aws-vpc" class="headerlink" title="Summary of aws-vpc"></a>Summary of aws-vpc</h4><blockquote>
+<p>:star: “aws-vpc” is similar to “host-gw”. about 93%+ performance of direct connection.</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">host to host</div><div class="line">- - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line">[ ID] Interval           Transfer     Bandwidth       Retr</div><div class="line">[  4]   0.00-10.00  sec   853 MBytes   716 Mbits/sec    0             sender</div><div class="line">[  4]   0.00-10.00  sec   853 MBytes   715 Mbits/sec                  receiver</div><div class="line"></div><div class="line">container to container</div><div class="line">- - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line">[ ID] Interval           Transfer     Bandwidth       Retr</div><div class="line">[  4]   0.00-10.00  sec   831 MBytes   697 Mbits/sec    7             sender</div><div class="line">[  4]   0.00-10.00  sec   830 MBytes   696 Mbits/sec                  receiver</div></pre></td></tr></table></figure>
+<h3 id="NetworkPolicy-for-isolation-TBD"><a href="#NetworkPolicy-for-isolation-TBD" class="headerlink" title="NetworkPolicy for isolation (TBD)"></a>NetworkPolicy for isolation (TBD)</h3><p><code>kubectl annotate ns gamestop &quot;net.beta.kubernetes.io/network-policy={\&quot;ingress\&quot;: {\&quot;isolation\&quot;: \&quot;DefaultDeny\&quot;}}&quot;</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">apiVersion: extensions/v1beta1</div><div class="line">kind: NetworkPolicy</div><div class="line">metadata:</div><div class="line"> name: access-gamestop</div><div class="line"> namespace: gamestop</div><div class="line">spec:</div><div class="line"> podSelector:</div><div class="line">  matchLabels:</div><div class="line">    role: db</div><div class="line"> ingress:</div><div class="line">  - from:</div><div class="line">     - namespaceSelector:</div><div class="line">        matchLabels:</div><div class="line">         project: gamestop</div><div class="line">    ports:</div><div class="line">     - protocol: tcp</div><div class="line">       port: 50000</div><div class="line">     - protocol: tcp</div><div class="line">       port: 50001</div><div class="line">     - protocol: tcp</div><div class="line">       port: 80</div><div class="line">     - protocol: tcp</div><div class="line">       port: 443</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+  </section>
+
+  
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+
+          
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.gif"
+               alt="Eric Li" />
+          <p class="site-author-name" itemprop="name">Eric Li</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">categories</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-name">tags</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eric Li</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="//jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="//fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="//jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="//velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="//velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="//src/utils.js?v="></script>
+
+  <script type="text/javascript" src="//src/motion.js?v="></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="//src/affix.js?v="></script>
+
+  <script type="text/javascript" src="//src/schemes/pisces.js?v="></script>
+
+
+
+  
+
+  
+
+
+  <script type="text/javascript" src="//src/bootstrap.js?v="></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'cuericlee';
+      var disqus_identifier = 'index.html';
+
+      var disqus_title = "";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+
+    </script>
+  
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

@@ -1,0 +1,839 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next " lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="//main.css?v=" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Eric Li's Blog">
+<meta property="og:url" content="http://ericculee.github.io/page/2/index.html">
+<meta property="og:site_name" content="Eric Li's Blog">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Eric Li's Blog">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: '',
+    sidebar: "",
+    fancybox: ,
+    motion: ,
+    duoshuo: {
+      userId: 'undefined',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    }
+  };
+</script>
+
+
+
+
+
+
+
+  <title> Eric Li's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81414009-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+  
+  
+
+  <div class="container one-collumn  
+   page-home 
+ ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Eric Li's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+  <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://ericculee.github.io/2016/08/25/Performance-Tuning-of-Spark-ML-Job/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Eric Li">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Eric Li's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Eric Li's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/08/25/Performance-Tuning-of-Spark-ML-Job/" itemprop="url">
+                  Performance Tuning of Spark ML Job
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <a href="/2016/08/25/Performance-Tuning-of-Spark-ML-Job/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/08/25/Performance-Tuning-of-Spark-ML-Job/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h3><p>Spark Advanced Tuning course is designed for attendees of online course of Big Data University. This article discuss some common way to tuning an job of spark ML.</p>
+<h3 id="Setup"><a href="#Setup" class="headerlink" title="Setup"></a>Setup</h3><p>Clone spark-ml-pipeline project</p>
+<pre><code>clone git@github.com:big-data-university/spark-ml-pipeline.git
+git checkout -b advanced
+</code></pre><h3 id="Tuning"><a href="#Tuning" class="headerlink" title="Tuning"></a>Tuning</h3><h4 id="1-Change-parallelism-default-partition-number-of-RDD"><a href="#1-Change-parallelism-default-partition-number-of-RDD" class="headerlink" title="1. Change parallelism (default partition number of RDD)"></a>1. <strong>Change parallelism (default partition number of RDD)</strong></h4><h5 id="1-1-Default-core-number"><a href="#1-1-Default-core-number" class="headerlink" title="1.1 Default core number"></a>1.1 Default core number</h5><p><code>val conf = new SparkConf().setAppName(&quot;CrossValidation Pipeline&quot;).setMaster(&quot;local[4]&quot;) //Using 2 core running on local</code></p>
+<p><a href="https://gist.github.com/cuericlee/3cdc51489c01e1add766f199ef260a34#file-pipline-scala-L51" target="_blank" rel="external">core number</a></p>
+<h5 id="1-2-Default-parallelism"><a href="#1-2-Default-parallelism" class="headerlink" title="1.2 Default parallelism"></a>1.2 Default parallelism</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">/*</div><div class="line">*Increase parallelism, local default = number of core. e.g. 8 on mac</div><div class="line">*/</div><div class="line"></div><div class="line">conf.set(&quot;spark.default.parallelism&quot;, &quot;4&quot;)</div></pre></td></tr></table></figure>
+<h5 id="1-3-Repartition-RDD-to-change-parallelism-on-the-fly"><a href="#1-3-Repartition-RDD-to-change-parallelism-on-the-fly" class="headerlink" title="1.3 Repartition RDD to change parallelism on the fly"></a>1.3 Repartition RDD to change parallelism on the fly</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">train.repartition(1)</div><div class="line">    </div><div class="line">train.repartition(10)</div></pre></td></tr></table></figure>
+<h4 id="2-Efficient-Serialize"><a href="#2-Efficient-Serialize" class="headerlink" title="2. Efficient Serialize"></a>2. <strong>Efficient Serialize</strong></h4><ul>
+<li>Enable Kryoserilizer for efficient persistent/cache and memory usage</li>
+</ul>
+<p><code>conf.set(&quot;spark.serializer&quot;, &quot;org.apache.spark.serializer.KryoSerializer&quot;)</code></p>
+<ul>
+<li>Enable library of kryo in build.sbt</li>
+</ul>
+<p><code>libraryDependencies += &quot;com.esotericsoftware&quot; %% &quot;kryo&quot; % &quot;4.0.0&quot;</code></p>
+<ul>
+<li>RDD persistent/cache</li>
+</ul>
+<p><code>RDD.persist(StorageLevel.MEMORY_ONLY_SER)</code></p>
+<h4 id="3-Reduce-times-of-full-GC"><a href="#3-Reduce-times-of-full-GC" class="headerlink" title="3. Reduce times of full GC"></a><strong>3. Reduce times of full GC</strong></h4><h5 id="3-1-Enable-GC-verbose-output-for-analysis"><a href="#3-1-Enable-GC-verbose-output-for-analysis" class="headerlink" title="3.1 Enable GC verbose output for analysis"></a>3.1 Enable GC verbose output for analysis</h5><p>Add JVM parameters to enable verbose and GC detail <code>-verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+UseCompressedOops</code></p>
+<pre><code>/**
+ * Enable GC trace for executor
+ */
+conf.set(&quot;spark.executor.extraJavaOptions&quot;, &quot;-verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+UseCompressedOops&quot;)
+</code></pre><h5 id="3-2-Determine-number-of-full-GC-during-whole-execution-using-standard-output"><a href="#3-2-Determine-number-of-full-GC-during-whole-execution-using-standard-output" class="headerlink" title="3.2 Determine number of full GC during whole execution using standard output."></a>3.2 Determine number of full GC during whole execution using standard output.</h5><pre><code>cat &lt;your_log_file&gt;|grep &quot;Full GC&quot;|wc -l
+</code></pre><h5 id="3-3-Evaluate-size-of-RDD-partition"><a href="#3-3-Evaluate-size-of-RDD-partition" class="headerlink" title="3.3 Evaluate size of RDD partition"></a>3.3 Evaluate size of RDD partition</h5><ol>
+<li>dfs.block.size - The default value in Hadoop 2.0 is 128MB. In the local mode the corresponding parameter is fs.local.block.size (Default value 32MB). It defines the default partition size.</li>
+</ol>
+<ol>
+<li><p>numPartitions - The default value is 0 which effectively defaults to 1. This is a parameter you pass to the sc.textFile(inputPath,numPartitions) method. It is used to decrease the partition size (increase the number of partitions) from the default value defined by dfs.block.size</p>
+</li>
+<li><p>mapreduce.input.fileinputformat.split.minsize - The default value is 1 byte. It is used to increase the partition size (decrease the number of partitions) from the default value defined by dfs.block.size</p>
+</li>
+</ol>
+<pre><code>println(&quot;fs.local.block.size: &quot; + sc.getConf.get(&quot;fs.local.block.size&quot;))
+println(&quot;mapreduce.input.fileinputformat.split.minsize: &quot; + sc.getConf.get(&quot;mapreduce.input.fileinputformat.split.minsize&quot;))
+println(&quot;size of trainRDD: &quot; + SizeEstimator.estimate(train) + &quot; Byte&quot;)
+println(&quot;size of testRDD: &quot; + SizeEstimator.estimate(test) + &quot; Byte&quot;)
+</code></pre><h5 id="3-4-Adjust-parallelism-to-reduce-number-of-full-GC"><a href="#3-4-Adjust-parallelism-to-reduce-number-of-full-GC" class="headerlink" title="3.4 Adjust parallelism to reduce number of full GC"></a>3.4 Adjust parallelism to reduce number of full GC</h5><ol>
+<li>Reduce parallelism when size of RDD &lt; block size</li>
+<li>Increase parallelism when of RDD &gt; block size</li>
+</ol>
+<h5 id="3-5-Increase-java-heap-for-both-driver-JVM-and-executor-to-reduce-GC"><a href="#3-5-Increase-java-heap-for-both-driver-JVM-and-executor-to-reduce-GC" class="headerlink" title="3.5 Increase java heap for both driver JVM and executor to reduce GC"></a>3.5 Increase java heap for both driver JVM and executor to reduce GC</h5><pre><code>conf.set(&quot;spark.driver.memory&quot;, &quot;2G&quot;) // Increase java heap for driver, -Xmx is illegal setting
+
+conf.set(&quot;spark.executor.memory&quot;, &quot;1G&quot;) //Increase to 2G per executor from default value 1G. -Xmx1G is illegal setting for spark executor.
+</code></pre><h5 id="3-6-validate-number-of-full-GC-and-conclusion"><a href="#3-6-validate-number-of-full-GC-and-conclusion" class="headerlink" title="3.6 validate number of full GC and conclusion"></a>3.6 validate number of full GC and conclusion</h5><p>Conclusion: It is significantly to reduce the execution time after reducing number of full GC.</p>
+<h4 id="4-Increase-instance-number-of-executor-in-the-cluster-env"><a href="#4-Increase-instance-number-of-executor-in-the-cluster-env" class="headerlink" title="4. Increase instance number of executor in the cluster env"></a><strong>4. Increase instance number of executor in the cluster env</strong></h4><p>Check the size and partition of RDD</p>
+<p>When size of RDD &gt;&gt; block size and number partition &gt;&gt; executor * core, it is significant improve performance to increase instance number of executor allowed in the cluster.</p>
+<pre><code>/**
+ * Increase executor numbers to increase parallelism, only works for cluster env. standalone, yarn, mesos
+ */
+conf.set(&quot;spark.executor.instances&quot;, &quot;4&quot;)
+</code></pre><h4 id="5-Reserve-as-much-as-possible-memory-for-executor-but-does-make-executor-overload"><a href="#5-Reserve-as-much-as-possible-memory-for-executor-but-does-make-executor-overload" class="headerlink" title="5. Reserve as much as possible memory for executor, but does make executor overload "></a><strong>5. Reserve as much as possible memory for executor, but does make executor overload </strong></h4><pre><code>conf.set(&quot;spark.executor.memory&quot;, &quot;1G&quot;) 
+</code></pre><h3 id="All-in-one"><a href="#All-in-one" class="headerlink" title="All in one"></a>All in one</h3><script src="https://gist.github.com/cuericlee/3cdc51489c01e1add766f199ef260a34.js"></script>
+
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://ericculee.github.io/2016/08/05/Research-on-High-availability-zone-and-federation-clusters-for-Kubernetes/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Eric Li">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Eric Li's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Eric Li's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/08/05/Research-on-High-availability-zone-and-federation-clusters-for-Kubernetes/" itemprop="url">
+                  Research on Ubernetes (High availability zone) and federation clusters for Kubernetes
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <a href="/2016/08/05/Research-on-High-availability-zone-and-federation-clusters-for-Kubernetes/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/08/05/Research-on-High-availability-zone-and-federation-clusters-for-Kubernetes/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h3><ol>
+<li><p>Multiple zone minion nodes share the same master node (api server, etcd and etc). Need to seriously considering the high availability of master node. Nodes is labeled by different zone and failure-domain to allow distribute workload across zones.</p>
+</li>
+<li><p>PV Affinity is used for zone awareness. But PV affinity is not ready. Most cloud providers (at least GCE and AWS) cannot attach their persistent volumes across zones.  Thus when a pod is being scheduled, if there is a volume<br>attached, that will dictate the zone.  This will be implemented using a new<br>scheduler predicate (a hard constraint): <code>VolumeZonePredicate</code>.<br>The PV is also labeled with the zone &amp; region it was created in. For version 1.3.4, dynamic persistent volumes are always created in the zone of the cluster master (here us-central1-a / us-west-2a); this will be improved in a future version (issue #23330.).   </p>
+</li>
+<li><p>Current kube-up.sh scripts depends on kube-up/kube-down/kube-push implementation and SDK of cloudprovider. gce and aws are supported well, but not for other cloudprovider today. (v1.3.4)</p>
+</li>
+<li><p>Alternative solution to setup an multiple availability zone with simple cloudprovider ubuntu/centos.</p>
+<p> 4.1 Key spec</p>
+<ul>
+<li>share etcd</li>
+<li>share flannel network</li>
+<li>share docker registry</li>
+<li><p>share apiserver. MASTER_INTERNAL_IP=172.20.0.9</p>
+<p>4.2 Solution</p>
+<blockquote>
+<p>Create VM firslty, then kube-up.sh an ubuntu (centos) worker only to reuse the same master.</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="Prerequisite"><a href="#Prerequisite" class="headerlink" title="Prerequisite"></a>Prerequisite</h3><pre><code>pip install --upgrade aws-cli
+</code></pre><h3 id="Init-install"><a href="#Init-install" class="headerlink" title="Init install"></a>Init install</h3><pre><code>curl -sS https://get.k8s.io | MULTIZONE=true KUBERNETES_PROVIDER=aws KUBE_AWS_ZONE=us-west-2 NUM_NODES=1 bash
+</code></pre><h3 id="Setup-an-multizone-cluster-on-aws"><a href="#Setup-an-multizone-cluster-on-aws" class="headerlink" title="Setup an multizone cluster on aws"></a>Setup an multizone cluster on aws</h3><ol>
+<li><p>Setup 1 node from zone us-west-2</p>
+<pre><code>MULTIZONE=true KUBERNETES_PROVIDER=aws KUBE_AWS_ZONE=us-west-2a NUM_NODES=1 ./cluster/kube-up.sh
+</code></pre></li>
+<li><p>Add 1 node cluster from zone us-west-2a</p>
+<pre><code>KUBE_USE_EXISTING_MASTER=true MULTIZONE=true KUBERNETES_PROVIDER=aws KUBE_AWS_ZONE=us-west-2b NUM_NODES=1 KUBE_SUBNET_CIDR=172.20.1.0/24 MASTER_INTERNAL_IP=172.20.0.9 kubernetes/cluster/kube-up.sh
+</code></pre></li>
+<li><p>Nodes labels for availability zone</p>
+</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">kubectl get nodes --show-labels</div><div class="line">NAME                                         STATUS     AGE       LABELS</div><div class="line">ip-172-20-0-31.us-west-2.compute.internal    NotReady   2d        beta.kubernetes.io/arch=amd64,beta.kubernetes.io/instance-type=t2.micro,beta.kubernetes.io/os=linux,failure-domain.beta.kubernetes.io/region=us-west-2,failure-domain.beta.kubernetes.io/zone=us-west-2a,kubernetes.io/hostname=ip-172-20-0-31.us-west-2.compute.internal</div><div class="line">ip-172-20-1-138.us-west-2.compute.internal   Ready      2d        beta.kubernetes.io/arch=amd64,beta.kubernetes.io/instance-type=t2.micro,beta.kubernetes.io/os=linux,failure-domain.beta.kubernetes.io/region=us-west-2,failure-domain.beta.kubernetes.io/zone=us-west-2b,kubernetes.io/hostname=ip-172-20-1-138.us-west-2.compute.internal</div></pre></td></tr></table></figure>
+<h3 id="Create-PV-with-zone-affinity-provisioned-at-zone-of-master-node"><a href="#Create-PV-with-zone-affinity-provisioned-at-zone-of-master-node" class="headerlink" title="Create PV with zone affinity, provisioned at zone of master node"></a>Create PV with zone affinity, provisioned at zone of master node</h3><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">kubectl create -f - &lt;&lt;EOF</div><div class="line">&#123;</div><div class="line">  "kind": "PersistentVolumeClaim",</div><div class="line">  "apiVersion": "v1",</div><div class="line">  "metadata": &#123;</div><div class="line">    "name": "claim1",</div><div class="line">    "annotations": &#123;</div><div class="line">        "volume.alpha.kubernetes.io/storage-class": "foo"</div><div class="line">    &#125;</div><div class="line">  &#125;,</div><div class="line">  "spec": &#123;</div><div class="line">    "accessModes": [</div><div class="line">      "ReadWriteOnce"</div><div class="line">    ],</div><div class="line">    "resources": &#123;</div><div class="line">      "requests": &#123;</div><div class="line">        "storage": "1Gi"</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">NAME                                       CAPACITY   ACCESSMODES   STATUS    CLAIM            REASON    AGE       LABELS</div><div class="line">pvc-feb20d75-593a-11e6-afe8-06d12fd78863   1Gi        RWO           Bound     default/claim1             42s       failure-domain.beta.kubernetes.io/region=us-west-2,failure-domain.beta.kubernetes.io/zone=us-west-2a</div></pre></td></tr></table></figure>
+<h3 id="Destroy-multiple-zone-cluster"><a href="#Destroy-multiple-zone-cluster" class="headerlink" title="Destroy multiple-zone cluster"></a>Destroy multiple-zone cluster</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">KUBERNETES_PROVIDER=aws KUBE_USE_EXISTING_MASTER=true KUBE_AWS_ZONE=us-west-2b kubernetes/cluster/kube-down.sh</div><div class="line">KUBERNETES_PROVIDER=aws KUBE_AWS_ZONE=us-west-2a kubernetes/cluster/kube-down.sh</div></pre></td></tr></table></figure>
+<h3 id="Multiple-cluster-management"><a href="#Multiple-cluster-management" class="headerlink" title="Multiple cluster management"></a>Multiple cluster management</h3><p><a href="http://kubernetes.io/docs/admin/federation/" target="_blank" rel="external">Federation panel</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">#Mandatory to build your own federation images with source code </div><div class="line">FEDERATION=true KUBE_RELEASE_RUN_TESTS=n make quick-release</div><div class="line"></div><div class="line">FEDERATION=true FEDERATION_PUSH_REPO_BASE=&lt;Your private registry&gt; ./build/push-federation-images.sh</div><div class="line"></div><div class="line">#Setup federation container, dns, router, lb, kubeconfig and federation namespace</div><div class="line"></div><div class="line">GOROOT=/root/go KUBE_ROOT=/root/k8s/src/k8s.io/kubernetes KUBERNETES_PROVIDER=aws DNS_ZONE_NAME=myfederation.aws FEDERATION_NAME=myfederation FEDERATION_PUSH_REPO_BASE=&lt;your private registry&gt; /root/k8s/src/k8s.io/kubernetes/federation/cluster/federation-up.sh</div><div class="line"></div><div class="line"></div><div class="line">GOROOT=/root/go KUBE_ROOT=/root/k8s/src/k8s.io/kubernetes KUBERNETES_PROVIDER=aws DNS_ZONE_NAME=myfederation.aws FEDERATION_NAME=myfederation FEDERATION_PUSH_REPO_BASE=&lt;your private registry&gt; /root/k8s/src/k8s.io/kubernetes/federation/cluster/federation-down.sh</div><div class="line"></div><div class="line">service &quot;federation-apiserver&quot; deleted</div><div class="line">secret &quot;default-token-k6v8j&quot; deleted</div><div class="line">secret &quot;federation-apiserver-kubeconfig&quot; deleted</div><div class="line">namespace &quot;federation&quot; deleted</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://ericculee.github.io/2016/08/02/scale-out-resource-vertically-by-resource-quota/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Eric Li">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Eric Li's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Eric Li's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/08/02/scale-out-resource-vertically-by-resource-quota/" itemprop="url">
+                  Scale out resource vertically by resource quota
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <a href="/2016/08/02/scale-out-resource-vertically-by-resource-quota/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/08/02/scale-out-resource-vertically-by-resource-quota/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="Set-default-resource-quota-for-namespace"><a href="#Set-default-resource-quota-for-namespace" class="headerlink" title="Set default resource quota for namespace"></a>Set default resource quota for namespace</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"># kubectl describe quota --namespace=quota-example</div><div class="line"></div><div class="line">Name:           compute-resources</div><div class="line">Namespace:      quota-example</div><div class="line">Resource        Used    Hard</div><div class="line">--------        ----    ----</div><div class="line">limits.cpu      200m    2</div><div class="line">limits.memory   512Mi   2Gi</div><div class="line">pods            1       4</div><div class="line">requests.cpu    100m    1</div><div class="line">requests.memory 256Mi   1Gi</div></pre></td></tr></table></figure>
+<h3 id="Deploy-pod-deployment-rs-to-namespace-then-deployment-will-use-default-resource-quota-without-explicit-specification"><a href="#Deploy-pod-deployment-rs-to-namespace-then-deployment-will-use-default-resource-quota-without-explicit-specification" class="headerlink" title="Deploy pod/deployment/rs to namespace, then deployment will use default resource quota without explicit specification."></a>Deploy pod/deployment/rs to namespace, then deployment will use default resource quota without explicit specification.</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">kubectl run nginx --image=nginx --replicas=1 --namespace=quota-example</div><div class="line">deployment &quot;nginx&quot; created</div><div class="line">[root@cdsdev-radiant-0001 quota]# kubectl describe limits limits --namespace=quota-example</div><div class="line">Name:           limits</div><div class="line">Namespace:      quota-example</div><div class="line">Type            Resource        Min     Max     Default Request Default Limit   Max Limit/Request Ratio</div><div class="line">----            --------        ---     ---     --------------- -------------   -----------------------</div><div class="line">Container       cpu             -       -       100m            200m            -</div><div class="line">Container       memory          -       -       256Mi           512Mi           -</div></pre></td></tr></table></figure>
+<p><code>kubectl describe rs  --namespace=quota-example</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">Name:           nginx-2040093540</div><div class="line">Namespace:      quota-example</div><div class="line">Image(s):       nginx</div><div class="line">Selector:       pod-template-hash=2040093540,run=nginx</div><div class="line">Labels:         pod-template-hash=2040093540,run=nginx</div><div class="line">Replicas:       1 current / 1 desired</div><div class="line">Pods Status:    1 Running / 0 Waiting / 0 Succeeded / 0 Failed</div><div class="line">No volumes.</div><div class="line">Events:</div><div class="line">  FirstSeen     LastSeen        Count   From                            SubobjectPath   Type            Reason                  Message</div><div class="line">  ---------     --------        -----   ----                            -------------   --------        ------                  -------</div><div class="line">  53s           53s             1       &#123;replicaset-controller &#125;                        Normal          SuccessfulCreate        Created pod: nginx-2040093540-iizoo</div></pre></td></tr></table></figure>
+<p><code>kubectl describe quota --namespace=quota-example</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">Name:           best-effort</div><div class="line">Namespace:      quota-example</div><div class="line">Scopes:         BestEffort</div><div class="line"> * Matches all pods that have best effort quality of service.</div><div class="line">Resource        Used    Hard</div><div class="line">--------        ----    ----</div><div class="line">pods            0       10</div><div class="line"></div><div class="line"></div><div class="line">Name:           compute-resources</div><div class="line">Namespace:      quota-example</div><div class="line">Resource        Used    Hard</div><div class="line">--------        ----    ----</div><div class="line">limits.cpu      200m    2</div><div class="line">limits.memory   512Mi   2Gi</div><div class="line">pods            1       4</div><div class="line">requests.cpu    100m    1</div><div class="line">requests.memory 256Mi   1Gi</div><div class="line"></div><div class="line"></div><div class="line">kubectl replace -f compute-resources.yaml  --namespace=quota-example</div><div class="line">resourcequota &quot;compute-resources&quot; replaced</div><div class="line">[root@cdsdev-radiant-0001 quota]# kubectl describe quota --namespace=quota-example</div><div class="line">Name:           best-effort</div><div class="line">Namespace:      quota-example</div><div class="line">Scopes:         BestEffort</div><div class="line"> * Matches all pods that have best effort quality of service.</div><div class="line">Resource        Used    Hard</div><div class="line">--------        ----    ----</div><div class="line">pods            0       10</div><div class="line"></div><div class="line"></div><div class="line">Name:           compute-resources</div><div class="line">Namespace:      quota-example</div><div class="line">Resource        Used    Hard</div><div class="line">--------        ----    ----</div><div class="line">limits.cpu      200m    4</div><div class="line">limits.memory   512Mi   4Gi</div><div class="line">pods            1       4</div><div class="line">requests.cpu    100m    2</div><div class="line">requests.memory 256Mi   2Gi</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+  </section>
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+
+          
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.gif"
+               alt="Eric Li" />
+          <p class="site-author-name" itemprop="name">Eric Li</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">categories</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-name">tags</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eric Li</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="//jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="//fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="//jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="//velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="//velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="//src/utils.js?v="></script>
+
+  <script type="text/javascript" src="//src/motion.js?v="></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="//src/affix.js?v="></script>
+
+  <script type="text/javascript" src="//src/schemes/pisces.js?v="></script>
+
+
+
+  
+
+  
+
+
+  <script type="text/javascript" src="//src/bootstrap.js?v="></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'cuericlee';
+      var disqus_identifier = 'page/2/index.html';
+
+      var disqus_title = "";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+
+    </script>
+  
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

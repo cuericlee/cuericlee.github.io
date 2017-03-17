@@ -1,0 +1,567 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next " lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="//main.css?v=" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="kubernetes,vlan,softlayer," />
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Span-VLAN k8s cluster Env12345678910111213:..........:........................:...............:................:............:........::    id    :        hostname        :   primary_ip  :   backend_ip">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Autoscale workload over Span-VLAN k8s cluster">
+<meta property="og:url" content="http://ericculee.github.io/2017/02/07/autoscale-crossAZ-span-vlan-cluster/index.html">
+<meta property="og:site_name" content="Eric Li's Blog">
+<meta property="og:description" content="Span-VLAN k8s cluster Env12345678910111213:..........:........................:...............:................:............:........::    id    :        hostname        :   primary_ip  :   backend_ip">
+<meta property="og:updated_time" content="2017-03-17T08:46:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Autoscale workload over Span-VLAN k8s cluster">
+<meta name="twitter:description" content="Span-VLAN k8s cluster Env12345678910111213:..........:........................:...............:................:............:........::    id    :        hostname        :   primary_ip  :   backend_ip">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: '',
+    sidebar: "",
+    fancybox: ,
+    motion: ,
+    duoshuo: {
+      userId: 'undefined',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    }
+  };
+</script>
+
+
+
+
+
+
+
+  <title> Autoscale workload over Span-VLAN k8s cluster | Eric Li's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-81414009-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+  
+  
+
+  <div class="container one-collumn  page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Eric Li's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://ericculee.github.io/2017/02/07/autoscale-crossAZ-span-vlan-cluster/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Eric Li">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Eric Li's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Eric Li's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Autoscale workload over Span-VLAN k8s cluster
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <a href="/2017/02/07/autoscale-crossAZ-span-vlan-cluster/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/02/07/autoscale-crossAZ-span-vlan-cluster/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Span-VLAN-k8s-cluster-Env"><a href="#Span-VLAN-k8s-cluster-Env" class="headerlink" title="Span-VLAN k8s cluster Env"></a>Span-VLAN k8s cluster Env</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">:..........:........................:...............:................:............:........:</div><div class="line">:    id    :        hostname        :   primary_ip  :   backend_ip   : datacenter : action :  public vlan/private vlan</div><div class="line">:..........:........................:...............:................:............:........:</div><div class="line">: 27407789 : hydra-calico-dal09-m01 : 169.46.186.87 :  10.173.49.4   :   dal09    :   -    :   1213/1319</div><div class="line">: 27407791 : hydra-calico-dal09-w01 : 169.45.171.24 : 10.155.230.151 :   dal09    :   -    :  996/968</div><div class="line">: 27407793 : hydra-calico-dal09-w02 :  169.45.131.2 :  10.153.86.9   :   dal09    :   -    :  959/1211</div><div class="line">: 27407873 : hydra-calico-dal10-w03 : 169.47.195.84 :  10.171.90.69  :   dal10    :   -    :  1136/1197</div><div class="line">: 27407875 : hydra-calico-dal10-w04 : 169.47.195.88 :  10.171.90.94  :   dal10    :   -    :  1136/1197</div><div class="line">:..........:........................:...............:................:............:........:</div><div class="line"></div><div class="line">root@hydra-calico-dal09-m01:~# kubectl get nodes --show-labels|grep zone</div><div class="line">10.153.86.9      Ready                         26d       beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,beta.kubernetes.io/zone=dal09,kubernetes.io/hostname=10.153.86.9</div><div class="line">10.171.90.94     Ready                         26d       beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,beta.kubernetes.io/zone=dal10,kubernetes.io/hostname=10.171.90.94</div></pre></td></tr></table></figure>
+<p>10.171.90.94: zone=dal10<br>10.153.86.9: zone=dal9</p>
+<h3 id="deploy-an-nginx-deployment"><a href="#deploy-an-nginx-deployment" class="headerlink" title="deploy an nginx deployment"></a>deploy an nginx deployment</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">kubectl run nginx-hpa --image=nginx --requests=cpu=100m,memory=50M --expose --port=80</div><div class="line"></div><div class="line">kubectl get deployment</div></pre></td></tr></table></figure>
+<h3 id="run-an-test-against-apache-server"><a href="#run-an-test-against-apache-server" class="headerlink" title="run an test against apache server."></a>run an test against apache server.</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">kubectl run -i --tty service-test --image=busybox /bin/sh</div><div class="line"></div><div class="line">$ wget -q -O- http://nginx-hpa.default.svc.cluster.local</div><div class="line"></div><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">&lt;title&gt;Welcome to nginx!&lt;/title&gt;</div><div class="line">&lt;style&gt;</div><div class="line">    body &#123;</div><div class="line">        width: 35em;</div><div class="line">        margin: 0 auto;</div><div class="line">        font-family: Tahoma, Verdana, Arial, sans-serif;</div><div class="line">    &#125;</div><div class="line">&lt;/style&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">&lt;h1&gt;Welcome to nginx!&lt;/h1&gt;</div><div class="line">&lt;p&gt;If you see this page, the nginx web server is successfully installed and</div><div class="line">working. Further configuration is required.&lt;/p&gt;</div><div class="line"></div><div class="line">&lt;p&gt;For online documentation and support please refer to</div><div class="line">&lt;a href=&quot;http://nginx.org/&quot;&gt;nginx.org&lt;/a&gt;.&lt;br/&gt;</div><div class="line">Commercial support is available at</div><div class="line">&lt;a href=&quot;http://nginx.com/&quot;&gt;nginx.com&lt;/a&gt;.&lt;/p&gt;</div><div class="line"></div><div class="line">&lt;p&gt;&lt;em&gt;Thank you for using nginx.&lt;/em&gt;&lt;/p&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure>
+<h3 id="manually-scale-out-application-cross-zone-dal9-and-dal10"><a href="#manually-scale-out-application-cross-zone-dal9-and-dal10" class="headerlink" title="manually scale out application cross zone dal9 and dal10"></a>manually scale out application cross zone dal9 and dal10</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"> $ kubectl scale deployment nginx-hpa --replicas=2</div><div class="line">deployment &quot;nginx-hpa&quot; scaled</div><div class="line"></div><div class="line">kubectl get pod -o wide|grep hpa</div><div class="line">nginx-hpa-2266641329-901jn        1/1       Running   0          19m       10.171.29.98    10.171.90.94 &lt;= dal10</div><div class="line">nginx-hpa-2266641329-zmnrg        1/1       Running   0          8m        10.98.23.204    10.153.86.9 &lt;=dal9</div></pre></td></tr></table></figure>
+<h3 id="autoscale-set-target-cpu-usage-with-30"><a href="#autoscale-set-target-cpu-usage-with-30" class="headerlink" title="autoscale, set target cpu usage with 30%"></a>autoscale, set target cpu usage with 30%</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line">kubectl autoscale deployment nginx-hpa --cpu-percent=30 --min=2 --max=10</div><div class="line"></div><div class="line">kubectl get hpa</div><div class="line">NAME          REFERENCE                TARGET    CURRENT   MINPODS   MAXPODS   AGE</div><div class="line">nginx-hpa     Deployment/nginx-hpa     30%       0%        2         10        4s</div></pre></td></tr></table></figure>
+<h3 id="raising-workload-with-10-concurrent-query-threads-to-reach-threshold-of-CPU-usage"><a href="#raising-workload-with-10-concurrent-query-threads-to-reach-threshold-of-CPU-usage" class="headerlink" title="raising workload with 10 concurrent query threads to reach threshold of CPU usage"></a>raising workload with 10 concurrent query threads to reach threshold of CPU usage</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">kubectl run -i --tty load-generator --image=busybox /bin/sh</div><div class="line"></div><div class="line">while true; do wget -q -O- http://nginx-hpa.default.svc.cluster.local &amp;&gt;/dev/null;done &amp;</div></pre></td></tr></table></figure>
+<h3 id="result-pod-scale-out-from-2-to-3"><a href="#result-pod-scale-out-from-2-to-3" class="headerlink" title="result: pod scale out from 2 to 3"></a>result: pod scale out from 2 to 3</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">$ kubectl get hpa</div><div class="line">NAME          REFERENCE                TARGET    CURRENT   MINPODS   MAXPODS   AGE</div><div class="line">nginx-hpa     Deployment/nginx-hpa     30%       67%       2         10        5m</div><div class="line"></div><div class="line"></div><div class="line">$ kubectl get pod -o wide|grep hpa</div><div class="line">nginx-hpa-2266641329-2l98k        1/1       Running   0          14s       10.98.23.206    10.153.86.9 &lt;= **newly created pod**</div><div class="line">nginx-hpa-2266641329-901jn        1/1       Running   0          38m       10.171.29.98    10.171.90.94</div><div class="line">nginx-hpa-2266641329-zmnrg        1/1       Running   0          27m       10.98.23.204    10.153.86.9</div></pre></td></tr></table></figure>
+<h3 id="drain-application-from-availability-zone-dal9-to-zone-dal10-online"><a href="#drain-application-from-availability-zone-dal9-to-zone-dal10-online" class="headerlink" title="drain application from availability zone dal9 to zone dal10 online"></a>drain application from availability zone dal9 to zone dal10 online</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">$kubectl drain 10.153.86.9</div><div class="line"></div><div class="line">node &quot;10.153.86.9&quot; cordoned</div><div class="line">pod &quot;nginx-hpa-2266641329-zmnrg&quot; evicted</div><div class="line">pod &quot;nginx-hpa-2266641329-2l98k&quot; evicted</div><div class="line">node &quot;10.153.86.9&quot; drained</div><div class="line"></div><div class="line">$kubectl get pod -o wide|grep hpa</div><div class="line">nginx-hpa-2266641329-5w5jt        1/1       Running   0          1m        10.171.29.104   10.171.90.94</div><div class="line">nginx-hpa-2266641329-901jn        1/1       Running   0          47m       10.171.29.98    10.171.90.94</div><div class="line">nginx-hpa-2266641329-wzwhm        1/1       Running   0          1m        10.171.29.107   10.171.90.94</div></pre></td></tr></table></figure>
+<h4 id="limitation-local-data-could-not-be-reserved-after-drain-app-from-one-available-zone-to-another-one"><a href="#limitation-local-data-could-not-be-reserved-after-drain-app-from-one-available-zone-to-another-one" class="headerlink" title="limitation. local data could not be reserved after drain app from one available zone to another one."></a>limitation. local data could not be reserved after drain app from one available zone to another one.</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">error: pods with local storage (use --delete-local-data to override): monitoring-grafana-3730655072-g667m, monitoring-influxdb-957705310-s144d</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+          
+            <a href="/tags/vlan/" rel="tag"># vlan</a>
+          
+            <a href="/tags/softlayer/" rel="tag"># softlayer</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/14/research-on-container-network/" rel="next" title="Research on container network of Kubernetes">
+                <i class="fa fa-chevron-left"></i> Research on container network of Kubernetes
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/17/Cisco-AnyConnect-failed-to-establish-connectivity/" rel="prev" title="Cisco AnyConnect failed to establish connectivity">
+                Cisco AnyConnect failed to establish connectivity <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.gif"
+               alt="Eric Li" />
+          <p class="site-author-name" itemprop="name">Eric Li</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">categories</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-name">tags</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eric Li</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="//jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="//fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="//jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="//velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="//velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="//src/utils.js?v="></script>
+
+  <script type="text/javascript" src="//src/motion.js?v="></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="//src/affix.js?v="></script>
+
+  <script type="text/javascript" src="//src/schemes/pisces.js?v="></script>
+
+
+
+  
+  <script type="text/javascript" src="//src/scrollspy.js?v="></script>
+<script type="text/javascript" src="//src/post-details.js?v="></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="//src/bootstrap.js?v="></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'cuericlee';
+      var disqus_identifier = '2017/02/07/autoscale-crossAZ-span-vlan-cluster/';
+
+      var disqus_title = "Autoscale workload over Span-VLAN k8s cluster";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
