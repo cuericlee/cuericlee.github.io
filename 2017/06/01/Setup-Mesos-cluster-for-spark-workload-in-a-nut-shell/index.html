@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="spark,mesos," />
 
 
 
@@ -87,12 +87,16 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Eric Li's Blog">
-<meta property="og:url" content="http://ericculee.github.io/index.html">
+<meta name="description" content="Setup Mesos cluster with AnsibleDependencies1234567ansible-galaxy install JasonGiedymin.mesos ansible-galaxy install AnsibleShipyard.ansible-zookeeper ansible-galaxy install AnsibleShipyard.ansible-ja">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Setup Mesos cluster for spark workload in a nut shell">
+<meta property="og:url" content="http://ericculee.github.io/2017/06/01/Setup-Mesos-cluster-for-spark-workload-in-a-nut-shell/index.html">
 <meta property="og:site_name" content="Eric Li's Blog">
+<meta property="og:description" content="Setup Mesos cluster with AnsibleDependencies1234567ansible-galaxy install JasonGiedymin.mesos ansible-galaxy install AnsibleShipyard.ansible-zookeeper ansible-galaxy install AnsibleShipyard.ansible-ja">
+<meta property="og:updated_time" content="2017-05-31T10:41:44.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Eric Li's Blog">
+<meta name="twitter:title" content="Setup Mesos cluster for spark workload in a nut shell">
+<meta name="twitter:description" content="Setup Mesos cluster with AnsibleDependencies1234567ansible-galaxy install JasonGiedymin.mesos ansible-galaxy install AnsibleShipyard.ansible-zookeeper ansible-galaxy install AnsibleShipyard.ansible-ja">
 
 
 
@@ -120,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="http://ericculee.github.io/"/>
+  <link rel="canonical" href="http://ericculee.github.io/2017/06/01/Setup-Mesos-cluster-for-spark-workload-in-a-nut-shell/"/>
 
 
 
 
 
-  <title> Eric Li's Blog </title>
+  <title> Setup Mesos cluster for spark workload in a nut shell | Eric Li's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="en">
@@ -160,9 +164,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
-   page-home 
- ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -293,9 +295,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -325,10 +327,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2017/06/01/Setup-Mesos-cluster-for-spark-workload-in-a-nut-shell/" itemprop="url">
-                  Setup Mesos cluster for spark workload in a nut shell
-                </a>
+                Setup Mesos cluster for spark workload in a nut shell
               
             
           </h1>
@@ -389,9 +388,7 @@
       
 
       
-        
-          
-            <h1 id="Setup-Mesos-cluster-with-Ansible"><a href="#Setup-Mesos-cluster-with-Ansible" class="headerlink" title="Setup Mesos cluster with Ansible"></a>Setup Mesos cluster with Ansible</h1><h2 id="Dependencies"><a href="#Dependencies" class="headerlink" title="Dependencies"></a>Dependencies</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">ansible-galaxy install JasonGiedymin.mesos </div><div class="line">ansible-galaxy install AnsibleShipyard.ansible-zookeeper </div><div class="line">ansible-galaxy install AnsibleShipyard.ansible-java </div><div class="line">ansible-galaxy install geerlingguy.java </div><div class="line">ansible-galaxy install JasonGiedymin.marathon </div><div class="line">ansible-galaxy install JasonGiedymin.chronos </div><div class="line">ansible-galaxy install JasonGiedymin.nodejs</div></pre></td></tr></table></figure>
+        <h1 id="Setup-Mesos-cluster-with-Ansible"><a href="#Setup-Mesos-cluster-with-Ansible" class="headerlink" title="Setup Mesos cluster with Ansible"></a>Setup Mesos cluster with Ansible</h1><h2 id="Dependencies"><a href="#Dependencies" class="headerlink" title="Dependencies"></a>Dependencies</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">ansible-galaxy install JasonGiedymin.mesos </div><div class="line">ansible-galaxy install AnsibleShipyard.ansible-zookeeper </div><div class="line">ansible-galaxy install AnsibleShipyard.ansible-java </div><div class="line">ansible-galaxy install geerlingguy.java </div><div class="line">ansible-galaxy install JasonGiedymin.marathon </div><div class="line">ansible-galaxy install JasonGiedymin.chronos </div><div class="line">ansible-galaxy install JasonGiedymin.nodejs</div></pre></td></tr></table></figure>
 <h2 id="Pre-requisite"><a href="#Pre-requisite" class="headerlink" title="Pre-requisite"></a>Pre-requisite</h2><h4 id="playbook-mesos-install-yml"><a href="#playbook-mesos-install-yml" class="headerlink" title="playbook mesos_install.yml"></a>playbook mesos_install.yml</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div></pre></td><td class="code"><pre><div class="line">- name: Mesos </div><div class="line">  hosts: mesos </div><div class="line">  gather_facts: yes </div><div class="line">  vars: </div><div class="line">    - zookeeper_hostnames: &quot;&#123;&#123; groups.zookeeper_hosts | join(&apos;:&apos; + zookeeper_client_port + &apos;,&apos;) &#125;&#125;:&#123;&#123; zookeeper_client_port &#125;&#125;&quot; </div><div class="line">  tasks: </div><div class="line">    - debug: msg=&quot; zookeeper_hostnames &#123;&#123; zookeeper_hostnames &#125;&#125;&quot; </div><div class="line"></div><div class="line">- name: Zookeeper </div><div class="line">  hosts: zookeeper_hosts </div><div class="line">  sudo: yes </div><div class="line">  roles: </div><div class="line">    - role: AnsibleShipyard.ansible-zookeeper </div><div class="line">  tasks: </div><div class="line">    - debug: msg=&quot;&#123;&#123; zookeeper_hostnames &#125;&#125;&quot; </div><div class="line"></div><div class="line">- name: Java </div><div class="line">  hosts: all </div><div class="line">  sudo: yes </div><div class="line">  roles: </div><div class="line">    - role: geerlingguy.java </div><div class="line"></div><div class="line"></div><div class="line">- name: mesos_masters </div><div class="line">  hosts: mesos-masters </div><div class="line">  strategy: debug </div><div class="line">  sudo: yes </div><div class="line">  gather_facts: yes </div><div class="line">  vars: </div><div class="line">    chronos_bin_load_options_override_enabled: yes </div><div class="line">    chronos_conf_options: </div><div class="line">      hostname: &quot;&#123;&#123; chronos_hostname &#125;&#125;&quot; </div><div class="line">      http_port: &quot;&#123;&#123; chronos_port &#125;&#125;&quot; </div><div class="line">      mesos_framework_name: &quot;chronos&quot; </div><div class="line">  tasks: </div><div class="line">    - debug: msg=&quot;&#123;&#123; chronos_conf_options &#125;&#125;&quot; </div><div class="line">  roles: </div><div class="line">    - role: JasonGiedymin.mesos </div><div class="line">      mesos_install_mode: master-slave </div><div class="line">    - role: JasonGiedymin.nodejs </div><div class="line">      nodejs_version: 0.10.25 </div><div class="line">      nodejs_global_packages: </div><div class="line">        - express </div><div class="line">      nodejs_path: &quot;/usr/&quot; </div><div class="line">    - role: JasonGiedymin.chronos </div><div class="line">      chronos_version: &quot;2.4.0&quot; </div><div class="line"></div><div class="line">- name: mesos_slaves </div><div class="line">  hosts: mesos-slaves </div><div class="line">  sudo: yes </div><div class="line">  gather_facts: yes </div><div class="line">  vars: </div><div class="line">    - zookeeper_hostnames: &quot;&#123;&#123; groups.zookeeper_hosts | join(&apos;:&apos; + zookeeper_client_port + &apos;,&apos;) &#125;&#125;:&#123;&#123; zookeeper_client_port &#125;&#125;&quot; </div><div class="line">  tasks: </div><div class="line">    - debug: msg=&quot;&#123;&#123; zookeeper_hostnames &#125;&#125; &quot; </div><div class="line">  roles: </div><div class="line">    - role: JasonGiedymin.mesos </div><div class="line">      mesos_install_mode: slave </div><div class="line">    - role: JasonGiedymin.marathon</div></pre></td></tr></table></figure>
 <h4 id="group-var-mesos-yml"><a href="#group-var-mesos-yml" class="headerlink" title="group_var/mesos.yml"></a>group_var/mesos.yml</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"># playbook group_vars file &quot;inventories/development/group_vars/mesos.yml&quot;</div><div class="line"></div><div class="line"># Mesos</div><div class="line">mesos_version: “1.1.0&quot;</div><div class="line">mesos_hostname: &quot;&#123;&#123; ansible_fqdn &#125;&#125;&quot;</div><div class="line">mesos_cluster_name: &quot;Development Cluster&quot;</div><div class="line">#binary</div><div class="line">mesos_containerizers: &quot;mesos&quot; </div><div class="line">#mesos_containerizers: &quot;docker,mesos&quot;</div><div class="line">mesos_quorum: &apos;2&apos;</div><div class="line">mesos_log_location: &apos;/opt/logs/mesos&apos;</div><div class="line">mesos_work_dir: &apos;/opt/mesos&apos;</div><div class="line">#share the same zookeeper in cluster</div><div class="line">zookeeper_hostnames: &quot;&#123;&#123; groups.zookeeper_hosts | join(&apos;:&apos; + zookeeper_client_port + &apos;,&apos;) &#125;&#125;:&#123;&#123; zookeeper_client_port &#125;&#125;&quot;</div></pre></td></tr></table></figure>
 <h4 id="Inventory"><a href="#Inventory" class="headerlink" title="Inventory"></a>Inventory</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">[all] </div><div class="line">mesos-spark-kube2 ansible_ssh_host=172.16.170.70 </div><div class="line">mesos-spark-kube3 ansible_ssh_host=172.16.170.146 </div><div class="line">mesos-spark-kube4 ansible_ssh_host=172.16.170.147 </div><div class="line">mesos-spark-kube1  ansible_ssh_host=172.16.169.210 </div><div class="line"></div><div class="line">[k8s-cluster:children] </div><div class="line">kube-node </div><div class="line">kube-master </div><div class="line"></div><div class="line">[kube-node] </div><div class="line">mesos-spark-kube2 </div><div class="line">mesos-spark-kube3 </div><div class="line">mesos-spark-kube4 </div><div class="line"></div><div class="line">[etcd] </div><div class="line">mesos-spark-kube1 </div><div class="line"></div><div class="line">[zookeeper_hosts] </div><div class="line">mesos-spark-kube1 </div><div class="line"></div><div class="line">[mesos:children] </div><div class="line">mesos-masters </div><div class="line">mesos-slaves </div><div class="line"></div><div class="line">[mesos-slaves] </div><div class="line">mesos-spark-kube2 </div><div class="line">mesos-spark-kube3 </div><div class="line">mesos-spark-kube4 </div><div class="line"></div><div class="line">[mesos-masters] </div><div class="line">mesos-spark-kube1</div></pre></td></tr></table></figure>
@@ -406,398 +403,74 @@
 <p>slave: <code>http://172.16.169.210:5051/metrics/snapshot</code></p>
 <h2 id="Integrate-with-spark-dispatcher-for-backend-job"><a href="#Integrate-with-spark-dispatcher-for-backend-job" class="headerlink" title="Integrate with spark dispatcher for backend job"></a>Integrate with spark dispatcher for backend job</h2><h4 id="mesos-dispatcher"><a href="#mesos-dispatcher" class="headerlink" title="mesos dispatcher"></a>mesos dispatcher</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">sbin/start-mesos-dispatcher.sh -h 172.16.169.210 --name dispatcher -m mesos://zk://172.16.169.210:2181/mesos </div><div class="line"></div><div class="line">sbin/start-mesos-dispatcher.sh -h 9.30.101.101 --name dispatcher -m mesos://zk://mesos-medium1:2181/mesos </div><div class="line">-z zk://172.16.169.210:2181</div></pre></td></tr></table></figure>
 
-          
+      
+    </div>
+
+    <div>
+      
         
+
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
       
     </div>
 
     <div>
+      
+        
+
       
     </div>
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://ericculee.github.io/2017/03/17/Cisco-AnyConnect-failed-to-establish-connectivity/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Eric Li">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://media.licdn.com/mpr/mpr/shrinknp_400_400/                                            AAEAAQAAAAAAAASiAAAAJDJiN2IzNDE4LTFiYTQtNDJjNS05ZTk5LWE1ODUyNTRiZTk0Zg.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Eric Li's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/03/17/Cisco-AnyConnect-failed-to-establish-connectivity/" itemprop="url">
-                  Cisco AnyConnect failed to establish connectivity
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-03-17T13:41:11+01:00">
-                2017-03-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
+        <div class="post-tags">
           
-
+            <a href="/tags/spark/" rel="tag"># spark</a>
           
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2017/03/17/Cisco-AnyConnect-failed-to-establish-connectivity/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/17/Cisco-AnyConnect-failed-to-establish-connectivity/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
+            <a href="/tags/mesos/" rel="tag"># mesos</a>
           
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
         
-          
-            <h3 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h3><p>Issue: Cisco AnyConnect failed to establish connectivity to VPN server due to hostscan state idel, TOKEN_INVALID, unable to init cert verification.<br>Root cause: unable to init cert verification due to Java certification validation (Java 1.8.0 121) </p>
-<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution:"></a>Solution:</h3><p>You has following 6 actions to resume your vpn client of Cisco AnyConnect. Mostly you can resolve issue thru actions No. 4 and No. 5 due to java security validation issue.</p>
-<ol>
-<li>“rm ~/.anyconnect”</li>
-<li><p>regenerate the p12 certs from website of your company and import certs to your Mac.  <a href="https://mobile.us.ibm.com:15048/tools/vpn/enduser/userdevice.php" target="_blank" rel="external">IBM</a><br> Notice: Delete previous all IBM VPN Intermediate CA from your keychains.</p>
-</li>
-<li><p>Double click on the P12 download from website, d select Open to import it using the Keychain Access utility</p>
-</li>
-<li><p><strong>Important: Delete all IBM Internal Root CA, IBM VPN Intermediate CA, Your private key from system chain, just leave these 3 in login chain</strong><br><img src="/images/14897297333203.jpg" alt=""></p>
-</li>
-<li><p>Login from Firefox <a href="https://(your" target="_blank" rel="external">https://(your</a> vpn endpoint)/CACHE/stc/2/index.html (e.g. <a href="https://sasvpn01.cn.ibm.com/CACHE/stc/2/index.html" target="_blank" rel="external">https://sasvpn01.cn.ibm.com/CACHE/stc/2/index.html</a>) to validate your certs and java runtime has been setup successfully.</p>
-</li>
-<li>reinstall Cisco AnyConnect.</li>
-<li>If below expired certs message prompt, add url to the exception as websites.<br><img src="/images/14897299944969.jpg" alt=""> <h3 id="Troubleshooting"><a href="#Troubleshooting" class="headerlink" title="Troubleshooting"></a>Troubleshooting</h3></li>
-</ol>
-<ol>
-<li>Open Java Console from System Preference to enable debug,trace for expired certs.</li>
-<li>Logging of cisco<pre><code>tail -f /var/log/system.log
-find ~/.cisco 
-tail -f ~/.cisco/hostscan/log/cscan.log 
-tail -f ~/.cisco/hostscan/log/libcsd.log 
-tail -f ~/.cisco/hostscan/log/cstub.log
-</code></pre></li>
-<li><p>Configuration of VPN client</p>
-<p><code>~/.anyconnect</code></p>
-</li>
-</ol>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
       
 
       
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://ericculee.github.io/2017/02/07/autoscale-crossAZ-span-vlan-cluster/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Eric Li">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://media.licdn.com/mpr/mpr/shrinknp_400_400/                                            AAEAAQAAAAAAAASiAAAAJDJiN2IzNDE4LTFiYTQtNDJjNS05ZTk5LWE1ODUyNTRiZTk0Zg.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Eric Li's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
+              <a href="/2017/03/17/Cisco-AnyConnect-failed-to-establish-connectivity/" rel="next" title="Cisco AnyConnect failed to establish connectivity">
+                <i class="fa fa-chevron-left"></i> Cisco AnyConnect failed to establish connectivity
+              </a>
             
-              
-                
-                <a class="post-title-link" href="/2017/02/07/autoscale-crossAZ-span-vlan-cluster/" itemprop="url">
-                  Autoscale workload over Span-VLAN k8s cluster
-                </a>
-              
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-02-07T13:41:11+01:00">
-                2017-02-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/container/" itemprop="url" rel="index">
-                    <span itemprop="name">container</span>
-                  </a>
-                </span>
-
-                
-                
-                  , 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/container/network/" itemprop="url" rel="index">
-                    <span itemprop="name">network</span>
-                  </a>
-                </span>
-
-                
-                
-                  , 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/container/network/ha/" itemprop="url" rel="index">
-                    <span itemprop="name">ha</span>
-                  </a>
-                </span>
-
-                
-                
-                  , 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/container/network/ha/tech/" itemprop="url" rel="index">
-                    <span itemprop="name">tech</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2017/02/07/autoscale-crossAZ-span-vlan-cluster/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/02/07/autoscale-crossAZ-span-vlan-cluster/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <h3 id="Span-VLAN-k8s-cluster-Env"><a href="#Span-VLAN-k8s-cluster-Env" class="headerlink" title="Span-VLAN k8s cluster Env"></a>Span-VLAN k8s cluster Env</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">:..........:........................:...............:................:............:........:</div><div class="line">:    id    :        hostname        :   primary_ip  :   backend_ip   : datacenter : action :  public vlan/private vlan</div><div class="line">:..........:........................:...............:................:............:........:</div><div class="line">: 27407789 : hydra-calico-dal09-m01 : 169.46.186.87 :  10.173.49.4   :   dal09    :   -    :   1213/1319</div><div class="line">: 27407791 : hydra-calico-dal09-w01 : 169.45.171.24 : 10.155.230.151 :   dal09    :   -    :  996/968</div><div class="line">: 27407793 : hydra-calico-dal09-w02 :  169.45.131.2 :  10.153.86.9   :   dal09    :   -    :  959/1211</div><div class="line">: 27407873 : hydra-calico-dal10-w03 : 169.47.195.84 :  10.171.90.69  :   dal10    :   -    :  1136/1197</div><div class="line">: 27407875 : hydra-calico-dal10-w04 : 169.47.195.88 :  10.171.90.94  :   dal10    :   -    :  1136/1197</div><div class="line">:..........:........................:...............:................:............:........:</div><div class="line"></div><div class="line">root@hydra-calico-dal09-m01:~# kubectl get nodes --show-labels|grep zone</div><div class="line">10.153.86.9      Ready                         26d       beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,beta.kubernetes.io/zone=dal09,kubernetes.io/hostname=10.153.86.9</div><div class="line">10.171.90.94     Ready                         26d       beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,beta.kubernetes.io/zone=dal10,kubernetes.io/hostname=10.171.90.94</div></pre></td></tr></table></figure>
-<p>10.171.90.94: zone=dal10<br>10.153.86.9: zone=dal9</p>
-<h3 id="deploy-an-nginx-deployment"><a href="#deploy-an-nginx-deployment" class="headerlink" title="deploy an nginx deployment"></a>deploy an nginx deployment</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">kubectl run nginx-hpa --image=nginx --requests=cpu=100m,memory=50M --expose --port=80</div><div class="line"></div><div class="line">kubectl get deployment</div></pre></td></tr></table></figure>
-<h3 id="run-an-test-against-apache-server"><a href="#run-an-test-against-apache-server" class="headerlink" title="run an test against apache server."></a>run an test against apache server.</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">kubectl run -i --tty service-test --image=busybox /bin/sh</div><div class="line"></div><div class="line">$ wget -q -O- http://nginx-hpa.default.svc.cluster.local</div><div class="line"></div><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">&lt;title&gt;Welcome to nginx!&lt;/title&gt;</div><div class="line">&lt;style&gt;</div><div class="line">    body &#123;</div><div class="line">        width: 35em;</div><div class="line">        margin: 0 auto;</div><div class="line">        font-family: Tahoma, Verdana, Arial, sans-serif;</div><div class="line">    &#125;</div><div class="line">&lt;/style&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">&lt;h1&gt;Welcome to nginx!&lt;/h1&gt;</div><div class="line">&lt;p&gt;If you see this page, the nginx web server is successfully installed and</div><div class="line">working. Further configuration is required.&lt;/p&gt;</div><div class="line"></div><div class="line">&lt;p&gt;For online documentation and support please refer to</div><div class="line">&lt;a href=&quot;http://nginx.org/&quot;&gt;nginx.org&lt;/a&gt;.&lt;br/&gt;</div><div class="line">Commercial support is available at</div><div class="line">&lt;a href=&quot;http://nginx.com/&quot;&gt;nginx.com&lt;/a&gt;.&lt;/p&gt;</div><div class="line"></div><div class="line">&lt;p&gt;&lt;em&gt;Thank you for using nginx.&lt;/em&gt;&lt;/p&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure>
-<h3 id="manually-scale-out-application-cross-zone-dal9-and-dal10"><a href="#manually-scale-out-application-cross-zone-dal9-and-dal10" class="headerlink" title="manually scale out application cross zone dal9 and dal10"></a>manually scale out application cross zone dal9 and dal10</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"> $ kubectl scale deployment nginx-hpa --replicas=2</div><div class="line">deployment &quot;nginx-hpa&quot; scaled</div><div class="line"></div><div class="line">kubectl get pod -o wide|grep hpa</div><div class="line">nginx-hpa-2266641329-901jn        1/1       Running   0          19m       10.171.29.98    10.171.90.94 &lt;= dal10</div><div class="line">nginx-hpa-2266641329-zmnrg        1/1       Running   0          8m        10.98.23.204    10.153.86.9 &lt;=dal9</div></pre></td></tr></table></figure>
-<h3 id="autoscale-set-target-cpu-usage-with-30"><a href="#autoscale-set-target-cpu-usage-with-30" class="headerlink" title="autoscale, set target cpu usage with 30%"></a>autoscale, set target cpu usage with 30%</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line">kubectl autoscale deployment nginx-hpa --cpu-percent=30 --min=2 --max=10</div><div class="line"></div><div class="line">kubectl get hpa</div><div class="line">NAME          REFERENCE                TARGET    CURRENT   MINPODS   MAXPODS   AGE</div><div class="line">nginx-hpa     Deployment/nginx-hpa     30%       0%        2         10        4s</div></pre></td></tr></table></figure>
-<h3 id="raising-workload-with-10-concurrent-query-threads-to-reach-threshold-of-CPU-usage"><a href="#raising-workload-with-10-concurrent-query-threads-to-reach-threshold-of-CPU-usage" class="headerlink" title="raising workload with 10 concurrent query threads to reach threshold of CPU usage"></a>raising workload with 10 concurrent query threads to reach threshold of CPU usage</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">kubectl run -i --tty load-generator --image=busybox /bin/sh</div><div class="line"></div><div class="line">while true; do wget -q -O- http://nginx-hpa.default.svc.cluster.local &amp;&gt;/dev/null;done &amp;</div></pre></td></tr></table></figure>
-<h3 id="result-pod-scale-out-from-2-to-3"><a href="#result-pod-scale-out-from-2-to-3" class="headerlink" title="result: pod scale out from 2 to 3"></a>result: pod scale out from 2 to 3</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">$ kubectl get hpa</div><div class="line">NAME          REFERENCE                TARGET    CURRENT   MINPODS   MAXPODS   AGE</div><div class="line">nginx-hpa     Deployment/nginx-hpa     30%       67%       2         10        5m</div><div class="line"></div><div class="line"></div><div class="line">$ kubectl get pod -o wide|grep hpa</div><div class="line">nginx-hpa-2266641329-2l98k        1/1       Running   0          14s       10.98.23.206    10.153.86.9 &lt;= **newly created pod**</div><div class="line">nginx-hpa-2266641329-901jn        1/1       Running   0          38m       10.171.29.98    10.171.90.94</div><div class="line">nginx-hpa-2266641329-zmnrg        1/1       Running   0          27m       10.98.23.204    10.153.86.9</div></pre></td></tr></table></figure>
-<h3 id="drain-application-from-availability-zone-dal9-to-zone-dal10-online"><a href="#drain-application-from-availability-zone-dal9-to-zone-dal10-online" class="headerlink" title="drain application from availability zone dal9 to zone dal10 online"></a>drain application from availability zone dal9 to zone dal10 online</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">$kubectl drain 10.153.86.9</div><div class="line"></div><div class="line">node &quot;10.153.86.9&quot; cordoned</div><div class="line">pod &quot;nginx-hpa-2266641329-zmnrg&quot; evicted</div><div class="line">pod &quot;nginx-hpa-2266641329-2l98k&quot; evicted</div><div class="line">node &quot;10.153.86.9&quot; drained</div><div class="line"></div><div class="line">$kubectl get pod -o wide|grep hpa</div><div class="line">nginx-hpa-2266641329-5w5jt        1/1       Running   0          1m        10.171.29.104   10.171.90.94</div><div class="line">nginx-hpa-2266641329-901jn        1/1       Running   0          47m       10.171.29.98    10.171.90.94</div><div class="line">nginx-hpa-2266641329-wzwhm        1/1       Running   0          1m        10.171.29.107   10.171.90.94</div></pre></td></tr></table></figure>
-<h4 id="limitation-local-data-could-not-be-reserved-after-drain-app-from-one-available-zone-to-another-one"><a href="#limitation-local-data-could-not-be-reserved-after-drain-app-from-one-available-zone-to-another-one" class="headerlink" title="limitation. local data could not be reserved after drain app from one available zone to another one."></a>limitation. local data could not be reserved after drain app from one available zone to another one.</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">error: pods with local storage (use --delete-local-data to override): monitoring-grafana-3730655072-g667m, monitoring-influxdb-957705310-s144d</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
-  </nav>
-
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
           
           </div>
@@ -805,6 +478,17 @@ tail -f ~/.cisco/hostscan/log/cstub.log
 
 
           
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -824,8 +508,17 @@ tail -f ~/.cisco/hostscan/log/cstub.log
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="https://media.licdn.com/mpr/mpr/shrinknp_400_400/                                            AAEAAQAAAAAAAASiAAAAJDJiN2IzNDE4LTFiYTQtNDJjNS05ZTk5LWE1ODUyNTRiZTk0Zg.jpg"
@@ -887,6 +580,22 @@ tail -f ~/.cisco/hostscan/log/cstub.log
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Setup-Mesos-cluster-with-Ansible"><span class="nav-number">1.</span> <span class="nav-text">Setup Mesos cluster with Ansible</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Dependencies"><span class="nav-number">1.1.</span> <span class="nav-text">Dependencies</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pre-requisite"><span class="nav-number">1.2.</span> <span class="nav-text">Pre-requisite</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#playbook-mesos-install-yml"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">playbook mesos_install.yml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#group-var-mesos-yml"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">group_var/mesos.yml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Inventory"><span class="nav-number">1.2.0.3.</span> <span class="nav-text">Inventory</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Let-is-go-to-kick-up-a-cluster"><span class="nav-number">1.3.</span> <span class="nav-text">Let is go to kick-up a cluster</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Setup-cluster-with-playbook-to-install-mesos"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">Setup cluster with playbook to install mesos</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Verify-cluster-with-slave-status"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">Verify cluster with slave status</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Verify-cluster-with-mesos-execution"><span class="nav-number">1.3.0.3.</span> <span class="nav-text">Verify cluster with mesos execution</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Go-further-for-client-setup"><span class="nav-number">1.4.</span> <span class="nav-text">Go further for client setup</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#setup-ubuntu-16-04-client"><span class="nav-number">1.4.0.1.</span> <span class="nav-text">setup ubuntu 16.04 client</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#setup-an-spark-client"><span class="nav-number">1.4.0.2.</span> <span class="nav-text">setup an spark client</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#submit-spark-job-from-client"><span class="nav-number">1.4.0.3.</span> <span class="nav-text">submit spark job from client</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#submit-to-multiple-master"><span class="nav-number">1.4.0.4.</span> <span class="nav-text">submit to multiple master</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Monitoring"><span class="nav-number">1.5.</span> <span class="nav-text">Monitoring</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mesos-monitoring-with-REST-API"><span class="nav-number">1.5.0.1.</span> <span class="nav-text">mesos monitoring with REST API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Integrate-with-spark-dispatcher-for-backend-job"><span class="nav-number">1.6.</span> <span class="nav-text">Integrate with spark dispatcher for backend job</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mesos-dispatcher"><span class="nav-number">1.6.0.1.</span> <span class="nav-text">mesos dispatcher</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -999,6 +708,10 @@ tail -f ~/.cisco/hostscan/log/cstub.log
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
 
   
 
@@ -1015,9 +728,9 @@ tail -f ~/.cisco/hostscan/log/cstub.log
 
     <script type="text/javascript">
       var disqus_shortname = 'cuericlee';
-      var disqus_identifier = 'index.html';
+      var disqus_identifier = '2017/06/01/Setup-Mesos-cluster-for-spark-workload-in-a-nut-shell/';
 
-      var disqus_title = "";
+      var disqus_title = "Setup Mesos cluster for spark workload in a nut shell";
 
 
       function run_disqus_script(disqus_script) {
@@ -1030,6 +743,13 @@ tail -f ~/.cisco/hostscan/log/cstub.log
 
       run_disqus_script('count.js');
 
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
       
 
     </script>

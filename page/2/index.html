@@ -304,6 +304,247 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://ericculee.github.io/2016/11/14/research-on-container-network/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Eric Li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://media.licdn.com/mpr/mpr/shrinknp_400_400/                                            AAEAAQAAAAAAAASiAAAAJDJiN2IzNDE4LTFiYTQtNDJjNS05ZTk5LWE1ODUyNTRiZTk0Zg.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Eric Li's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/11/14/research-on-container-network/" itemprop="url">
+                  Research on container network of Kubernetes
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-11-14T09:43:20+01:00">
+                2016-11-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/container/" itemprop="url" rel="index">
+                    <span itemprop="name">container</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/container/network/" itemprop="url" rel="index">
+                    <span itemprop="name">network</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/11/14/research-on-container-network/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/11/14/research-on-container-network/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Network-provider-research"><a href="#Network-provider-research" class="headerlink" title="Network provider research"></a>Network provider research</h2><table>
+<thead>
+<tr>
+<th>provider</th>
+<th>k8s version</th>
+<th>k8s network policy</th>
+<th>pros</th>
+<th>cons</th>
+<th>thoughoutput /%direct</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>flannel vxlan</td>
+<td>&gt;= 1.2</td>
+<td>no</td>
+<td>1) easy to configure <br> 2) easy to span VLAN/datacenter</td>
+<td>1) Broadcast flood to 192.168.0.0/16 since no exact ip route setting. <br>2) <a href="">performance downgrade</a> <br> 3) network isolation needs extra subnet mgt. efforts</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>flannel host-gw</td>
+<td>&gt;= 1.2</td>
+<td>no</td>
+<td>1) easy to configure<br> 2) no obvious performance downgrade</td>
+<td>1) To span multiple subnets in a vlan, need extra steps to add routing rules <br> 2) can’t span multiple vlans, datacenters. <br> 3) doesn’t support network policy<br> 4) network isolation needs extra subnet mgt. efforts</td>
+<td>93%</td>
+</tr>
+<tr>
+<td>calico</td>
+<td>&gt;= 1.3</td>
+<td>yes</td>
+<td>1) <code>bird</code> agents configure routes  with BGP on each node.<br> 2) flexible subnets expansiton with ip address pool mgmt<br> 3) support k8s network policy <br> 4) enable <code>-ipip</code> to support cross L2 VLAN.</td>
+<td>1) arch is complex, management of bird and felix, need higher learning carve for deployment, debugging, operation <br> 2) when enabling <code>-ipip</code>, introduce additional packet encapsulation with significant performance downgrade.</td>
+<td>BGP:93% vs BGP+ipip:64%</td>
+</tr>
+<tr>
+<td>canal (calico + flannel vxlan)</td>
+<td>&gt;= 1.3</td>
+<td>yes</td>
+<td>1) support vxlan to cross L2. <br>2) Network policy support extended from Felix of calico. <br>3) smooth migration from existing flannel to calico</td>
+<td>1)significant performance downgrade due to packet encapsulation and broadcast flood. <br>2) Double complexity</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>calico + IaaS IP address (SL portableIP) + hostAffirnity</td>
+<td>&gt;= 1.3</td>
+<td>yes</td>
+<td>1) consist network IP address space as IaaS env. <br> 2) Network policy support.</td>
+<td>1) No L2 support to cross VLAN. <br> 2) enable subnet of hostAffirnity and integrate application of ip address space from IaaS.</td>
+<td>93%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="Flannel"><a href="#Flannel" class="headerlink" title="Flannel"></a>Flannel</h3><h4 id="Summary-of-flannel-over-“vxlan”-and-“host-gw”"><a href="#Summary-of-flannel-over-“vxlan”-and-“host-gw”" class="headerlink" title="Summary of flannel over “vxlan” and “host-gw”"></a>Summary of flannel over “vxlan” and “host-gw”</h4><blockquote>
+<p>:star: <code>vxlan</code> is the default backend type of ubuntu k8s deployment. The container-to-container test result above (1.37 G/sec) performs <strong>~50%</strong> of the raw host-to-host result (3.02 G/sec).<br>:star: “host-gw” leverage the kernel route table with “ip routes” to route traffic to target host. The container-to-container test result above (2.84 G/sec) performs <strong>~93%</strong> of the raw host-to-host result (3.02 G/sec)</p>
+</blockquote>
+<p>container to container over vxlan</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ docker run  -it --rm networkstatic/iperf3 -c 172.31.71.4</div><div class="line">Connecting to host 172.31.71.4, port 5201</div><div class="line">[  4] local 172.31.15.4 port 57807 connected to 172.31.71.4 - - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line">[ ID] Interval           Transfer     Bandwidth       Retr</div><div class="line">[  4]   0.00-10.00  sec  1.60 GBytes  1.37 Gbits/sec  398             sender</div><div class="line">[  4]   0.00-10.00  sec  1.60 GBytes  1.37 Gbits/sec                  receiver</div></pre></td></tr></table></figure>
+<p>container to container over host-gw<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">- - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line">[ ID] Interval           Transfer     Bandwidth       Retr</div><div class="line">[  4]   0.00-10.00  sec  3.31 GBytes  2.85 Gbits/sec  284             sender</div><div class="line">[  4]   0.00-10.00  sec  3.31 GBytes  2.84 Gbits/sec                  receiver</div></pre></td></tr></table></figure></p>
+<h3 id="Calico"><a href="#Calico" class="headerlink" title="Calico"></a>Calico</h3><h4 id="Summary-of-calico-BGP-and-calico-BGP-ipip"><a href="#Summary-of-calico-BGP-and-calico-BGP-ipip" class="headerlink" title="Summary of calico BGP and calico BGP+ipip"></a>Summary of calico BGP and calico BGP+ipip</h4><blockquote>
+<p>:star: “calico BGP(node to node mesh)” is similar to “host-gw”. about 93%+ performance of direct connection.<br>:star: “calico BGP + <code>-ipip</code>(node to node mesh)” is similar to “vxlan”. it is about 64%+ performance of direct connection due to packet escapsulation, but it is better than “vxlan” without broadcast flood due to appropriate ip routes setting. Significant negative performance impact even for connection in the same VLAN.</p>
+</blockquote>
+<p>BGP without ipip</p>
+<p>host to host (in the same VLAN)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Connecting to host 10.177.83.70, port 5201</div><div class="line">[  4] local 10.177.83.83 port 39122 connected to 10.177.83.70 port 5201</div><div class="line">- - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line">[ ID] Interval           Transfer     Bandwidth       Retr</div><div class="line">[  4]   0.00-10.00  sec  3.71 GBytes  3.19 Gbits/sec    0             sender</div><div class="line">[  4]   0.00-10.00  sec  3.71 GBytes  3.18 Gbits/sec                  receiver</div></pre></td></tr></table></figure></p>
+<p>Container to container over BGP node to node mesh(same VLAN)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"> ID] Interval           Transfer     Bandwidth       Retr</div><div class="line">[  4]   0.00-10.00  sec  3.45 GBytes  2.97 Gbits/sec  608             sender</div><div class="line">[  4]   0.00-10.00  sec  3.45 GBytes  2.96 Gbits/sec                  receiver</div></pre></td></tr></table></figure>
+<p><strong>Container to container over BGP+<code>-ipip</code> (same VLAN)</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[ ID] Interval           Transfer     Bandwidth       Retr</div><div class="line">[  4]   0.00-10.00  sec  2.37 GBytes  2.03 Gbits/sec    3             sender</div><div class="line">[  4]   0.00-10.00  sec  2.36 GBytes  2.03 Gbits/sec                  receiver</div></pre></td></tr></table></figure></p>
+<p><strong>Container to container over BGP+<code>-ipip</code> (cross VLAN)</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[ ID] Interval           Transfer     Bandwidth       Retr</div><div class="line">[  4]   0.00-10.00  sec  2.47 GBytes  2.12 Gbits/sec  556             sender</div><div class="line">[  4]   0.00-10.00  sec  2.46 GBytes  2.12 Gbits/sec                  receiver</div></pre></td></tr></table></figure>
+<p>host to host (cross vlan)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[ ID] Interval           Transfer     Bandwidth       Retr</div><div class="line">[  4]   0.00-10.00  sec  4.43 GBytes  3.81 Gbits/sec  1742             sender</div><div class="line">[  4]   0.00-10.00  sec  4.43 GBytes  3.81 Gbits/sec                  receiver</div></pre></td></tr></table></figure>
+<h3 id="AWS-VPC-network"><a href="#AWS-VPC-network" class="headerlink" title="AWS VPC network"></a>AWS VPC network</h3><h4 id="Summary-of-aws-vpc"><a href="#Summary-of-aws-vpc" class="headerlink" title="Summary of aws-vpc"></a>Summary of aws-vpc</h4><blockquote>
+<p>:star: “aws-vpc” is similar to “host-gw”. about 93%+ performance of direct connection.</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">host to host</div><div class="line">- - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line">[ ID] Interval           Transfer     Bandwidth       Retr</div><div class="line">[  4]   0.00-10.00  sec   853 MBytes   716 Mbits/sec    0             sender</div><div class="line">[  4]   0.00-10.00  sec   853 MBytes   715 Mbits/sec                  receiver</div><div class="line"></div><div class="line">container to container</div><div class="line">- - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line">[ ID] Interval           Transfer     Bandwidth       Retr</div><div class="line">[  4]   0.00-10.00  sec   831 MBytes   697 Mbits/sec    7             sender</div><div class="line">[  4]   0.00-10.00  sec   830 MBytes   696 Mbits/sec                  receiver</div></pre></td></tr></table></figure>
+<h3 id="NetworkPolicy-for-isolation-TBD"><a href="#NetworkPolicy-for-isolation-TBD" class="headerlink" title="NetworkPolicy for isolation (TBD)"></a>NetworkPolicy for isolation (TBD)</h3><p><code>kubectl annotate ns gamestop &quot;net.beta.kubernetes.io/network-policy={\&quot;ingress\&quot;: {\&quot;isolation\&quot;: \&quot;DefaultDeny\&quot;}}&quot;</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">apiVersion: extensions/v1beta1</div><div class="line">kind: NetworkPolicy</div><div class="line">metadata:</div><div class="line"> name: access-gamestop</div><div class="line"> namespace: gamestop</div><div class="line">spec:</div><div class="line"> podSelector:</div><div class="line">  matchLabels:</div><div class="line">    role: db</div><div class="line"> ingress:</div><div class="line">  - from:</div><div class="line">     - namespaceSelector:</div><div class="line">        matchLabels:</div><div class="line">         project: gamestop</div><div class="line">    ports:</div><div class="line">     - protocol: tcp</div><div class="line">       port: 50000</div><div class="line">     - protocol: tcp</div><div class="line">       port: 50001</div><div class="line">     - protocol: tcp</div><div class="line">       port: 80</div><div class="line">     - protocol: tcp</div><div class="line">       port: 443</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://ericculee.github.io/2016/08/25/Performance-Tuning-of-Spark-ML-Job/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -717,164 +958,6 @@ conf.set(&quot;spark.executor.instances&quot;, &quot;4&quot;)
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://ericculee.github.io/2016/08/02/scale-out-resource-vertically-by-resource-quota/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Eric Li">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://media.licdn.com/mpr/mpr/shrinknp_400_400/                                            AAEAAQAAAAAAAASiAAAAJDJiN2IzNDE4LTFiYTQtNDJjNS05ZTk5LWE1ODUyNTRiZTk0Zg.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Eric Li's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/08/02/scale-out-resource-vertically-by-resource-quota/" itemprop="url">
-                  Scale out resource vertically by resource quota
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-08-02T12:22:01+02:00">
-                2016-08-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/container/" itemprop="url" rel="index">
-                    <span itemprop="name">container</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2016/08/02/scale-out-resource-vertically-by-resource-quota/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/08/02/scale-out-resource-vertically-by-resource-quota/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="Set-default-resource-quota-for-namespace"><a href="#Set-default-resource-quota-for-namespace" class="headerlink" title="Set default resource quota for namespace"></a>Set default resource quota for namespace</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"># kubectl describe quota --namespace=quota-example</div><div class="line"></div><div class="line">Name:           compute-resources</div><div class="line">Namespace:      quota-example</div><div class="line">Resource        Used    Hard</div><div class="line">--------        ----    ----</div><div class="line">limits.cpu      200m    2</div><div class="line">limits.memory   512Mi   2Gi</div><div class="line">pods            1       4</div><div class="line">requests.cpu    100m    1</div><div class="line">requests.memory 256Mi   1Gi</div></pre></td></tr></table></figure>
-<h3 id="Deploy-pod-deployment-rs-to-namespace-then-deployment-will-use-default-resource-quota-without-explicit-specification"><a href="#Deploy-pod-deployment-rs-to-namespace-then-deployment-will-use-default-resource-quota-without-explicit-specification" class="headerlink" title="Deploy pod/deployment/rs to namespace, then deployment will use default resource quota without explicit specification."></a>Deploy pod/deployment/rs to namespace, then deployment will use default resource quota without explicit specification.</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">kubectl run nginx --image=nginx --replicas=1 --namespace=quota-example</div><div class="line">deployment &quot;nginx&quot; created</div><div class="line">[root@cdsdev-radiant-0001 quota]# kubectl describe limits limits --namespace=quota-example</div><div class="line">Name:           limits</div><div class="line">Namespace:      quota-example</div><div class="line">Type            Resource        Min     Max     Default Request Default Limit   Max Limit/Request Ratio</div><div class="line">----            --------        ---     ---     --------------- -------------   -----------------------</div><div class="line">Container       cpu             -       -       100m            200m            -</div><div class="line">Container       memory          -       -       256Mi           512Mi           -</div></pre></td></tr></table></figure>
-<p><code>kubectl describe rs  --namespace=quota-example</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">Name:           nginx-2040093540</div><div class="line">Namespace:      quota-example</div><div class="line">Image(s):       nginx</div><div class="line">Selector:       pod-template-hash=2040093540,run=nginx</div><div class="line">Labels:         pod-template-hash=2040093540,run=nginx</div><div class="line">Replicas:       1 current / 1 desired</div><div class="line">Pods Status:    1 Running / 0 Waiting / 0 Succeeded / 0 Failed</div><div class="line">No volumes.</div><div class="line">Events:</div><div class="line">  FirstSeen     LastSeen        Count   From                            SubobjectPath   Type            Reason                  Message</div><div class="line">  ---------     --------        -----   ----                            -------------   --------        ------                  -------</div><div class="line">  53s           53s             1       &#123;replicaset-controller &#125;                        Normal          SuccessfulCreate        Created pod: nginx-2040093540-iizoo</div></pre></td></tr></table></figure>
-<p><code>kubectl describe quota --namespace=quota-example</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">Name:           best-effort</div><div class="line">Namespace:      quota-example</div><div class="line">Scopes:         BestEffort</div><div class="line"> * Matches all pods that have best effort quality of service.</div><div class="line">Resource        Used    Hard</div><div class="line">--------        ----    ----</div><div class="line">pods            0       10</div><div class="line"></div><div class="line"></div><div class="line">Name:           compute-resources</div><div class="line">Namespace:      quota-example</div><div class="line">Resource        Used    Hard</div><div class="line">--------        ----    ----</div><div class="line">limits.cpu      200m    2</div><div class="line">limits.memory   512Mi   2Gi</div><div class="line">pods            1       4</div><div class="line">requests.cpu    100m    1</div><div class="line">requests.memory 256Mi   1Gi</div><div class="line"></div><div class="line"></div><div class="line">kubectl replace -f compute-resources.yaml  --namespace=quota-example</div><div class="line">resourcequota &quot;compute-resources&quot; replaced</div><div class="line">[root@cdsdev-radiant-0001 quota]# kubectl describe quota --namespace=quota-example</div><div class="line">Name:           best-effort</div><div class="line">Namespace:      quota-example</div><div class="line">Scopes:         BestEffort</div><div class="line"> * Matches all pods that have best effort quality of service.</div><div class="line">Resource        Used    Hard</div><div class="line">--------        ----    ----</div><div class="line">pods            0       10</div><div class="line"></div><div class="line"></div><div class="line">Name:           compute-resources</div><div class="line">Namespace:      quota-example</div><div class="line">Resource        Used    Hard</div><div class="line">--------        ----    ----</div><div class="line">limits.cpu      200m    4</div><div class="line">limits.memory   512Mi   4Gi</div><div class="line">pods            1       4</div><div class="line">requests.cpu    100m    2</div><div class="line">requests.memory 256Mi   2Gi</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -924,7 +1007,7 @@ conf.set(&quot;spark.executor.instances&quot;, &quot;4&quot;)
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
@@ -946,7 +1029,7 @@ conf.set(&quot;spark.executor.instances&quot;, &quot;4&quot;)
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-count">27</span>
                 <span class="site-state-item-name">tags</span>
               </a>
             </div>
